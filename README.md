@@ -1,180 +1,70 @@
-1. create your new project directory and `cd` into it 
-2. `git init`
-3. create a simple `.gitignore`
-        
-        # .gitignore
+# Check-Your-Math
 
-        /node_modules/
-4. `npm init` and follow prompts
-5. install dev dependencies
-   
-        npm install @babel/core @babel/preset-env autoprefixer babel-loader css-loader fibers file-loader mini-css-extract-plugin node-sass postcss-loader sass sass-loader style-loader url-loader webpack webpack-cli webpack-dev-server webpack-merge --save-dev
+# CSS-Demo
+[Live Link coming soon](https://pages.github.com/)
 
-6. create basic `/src` subdirectory file structure
+## Overview
 
-        - src/
-            - index.js
-            styles/
-                - index.scss
-            scripts/
+This is a single player game.
+  * Main screen displays a math operation
+  * Player can choose answer from the numbers on the screen
 
-7. In your root directory, create `webpack.common.js`
+## Functionality
 
-    ```JavaScript
-    // webpack.common.js
 
-    const path = require("path");
-    const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-    const outputDir = "./dist";
+## MVPs
+  * Make the falling numbers and display on screen
+  * Genarate equations
+  * Make the falling numbers clickable, register the clicked number, right answer should delete the number
+  * Bonus:
+    * Add medium and hard levels for Math equation
+    * Integrate Web music API to add game sounds
 
-    module.exports = {
-    entry: path.resolve(__dirname, "src", "index.js"), //
-    output: {
-        path: path.join(__dirname, outputDir),
-        filename: "[name].js",
-        publicPath: "/dist/"
-    },
-    resolve: {
-        extensions: [".js"] // if we were using React.js, we would include ".jsx"
-    },
-    module: {
-        rules: [
-        {
-            test: /\.js$/, // if we were using React.js, we would use \.jsx?$/
-            use: {
-            loader: "babel-loader",
-            options: {
-                presets: ["@babel/preset-env"],
-                plugins: ["@babel/plugin-proposal-optional-chaining"],
-                exclude: /node_modules/
-            } // if we were using React.js, we would include "react"
-            }
-        },
-        {
-            test: /\.css$/,
-            use: [
-            {
-                loader: MiniCssExtractPlugin.loader,
-                options: {
-                // you can specify a publicPath here
-                // by default it uses publicPath in webpackOptions.output
-                publicPath: "../",
-                hmr: process.env.NODE_ENV === "development"
-                }
-            },
-            "css-loader",
-            "postcss-loader"
-            ]
-        },
-        {
-            test: /\.(png|jpe?g|gif)$/i,
-            use: [
-            {
-                loader: "file-loader",
-                options: {
-                // you can specify a publicPath here
-                // by default it uses publicPath in webpackOptions.output
-                name: "[name].[ext]",
-                outputPath: "images/",
-                publicPath: "images/"
-                }
-            }
-            ]
-        },
-        {
-            test: /\.scss/,
-            use: [
-            {
-                loader: MiniCssExtractPlugin.loader,
-                options: {
-                // you can specify a publicPath here
-                // by default it uses publicPath in webpackOptions.output
-                publicPath: "../",
-                hmr: process.env.NODE_ENV === "development"
-                }
-            },
-            "css-loader",
-            "sass-loader",
-            "postcss-loader"
-            ]
-        }
-        ]
-    },
-    plugins: [
-        new MiniCssExtractPlugin({
-        // Options similar to the same options in webpackOptions.output
-        // all options are optional
-        filename: "[name].css",
-        chunkFilename: "[id].css",
-        ignoreOrder: false // Enable to remove warnings about conflicting order
-        }),
-        require("autoprefixer")
-    ]
-    };
+## Classes
+  * Util
+    * Utility code for the velocity of fall of numbers
+  * MovingObjects
+    * Base class for moving objects
+  * Numbers
+    * Inherits from movingObjects
+  * Equation
+    * generates random math equations
+  * Game
+    * Holds core game functionality
+      * Start
+  * GameView
+    * stores a game instance, 
+    * stores a canvas to draw into 
 
-    ```
+## Wireframes
 
-8. Create `webpack.dev.js`
+![WireFrame](CheckYourMathWireFrame.jpg)
 
-    ```JavaScript
-    // wepack.dev.js
-    const merge = require("webpack-merge");
-    const common = require("./webpack.common.js");
+## Architecture and Technology
+CSS, Javascript, HTML, three.js, Web Audio API for game music 
 
-    module.exports = merge(common, {
-        mode: "development",
-        devtool: "inline-source-map",
-        devServer: {
-            contentBase: "./",
-            watchContentBase: true,
-            open: "Google Chrome"
-        }
-    });
-    ```
+## Implementation Timeline
 
-9. Create `webpack.prod.js`
-
-    ```JavaScript
-    // webpack.prod.js
-    const merge = require("webpack-merge");
-    const common = require("./webpack.common.js");
-
-    module.exports = merge(common, {
-        mode: "production",
-        devtool: "source-map"
-    });
-    ```
-
-10. create `postcss.config.js`
-
-    ```JavaScript
-    // postcss.config.js
-    module.exports = {
-        plugins: {
-            autoprefixer: {}
-        }
-    };
-    ```
-
-11. add `browserlist` key and update `scripts` in `package.json`
-
-    ```JavaScript
-    // package.json
-    "browserslist": [
-        "last 1 version",
-        "> 1%",
-        "maintained node versions",
-        "not dead"
-    ],
-    "scripts": {
-        "start": "webpack-dev-server --config webpack.dev.js",
-        "webpack:watch": "webpack --watch --config webpack.dev.js",
-        "webpack:build": "webpack --config webpack.prod.js  --optimize-minimize"
-    },
-    ```
-
-12. create `index.scss` in `/src/styles`
-
-13. create `index.js` in `/src` directory and import style `/src/styles/index.scss`
-
-14. create `index.html` and import `dist/main.css` and `dist/main.js` appropriately
+### Phase 1
+  Implement falling numbers on screen
+   * create util class
+      * const util - generates velocity of fall
+      * util.inherits - inheritance
+   * create movingobjects class
+      * constructor with necessary arguments
+      * MovingObject.prototype.move 
+      * MovingObject.prototype.draw  (might differ for three.js)
+   * create numbers class inheriting form movingobjects
+      * function Number
+      * Inherits from movingObject
+   * create Game class
+      * 
+### Phase 2
+  Generate equations
+   * create Equation class
+### Phase 3
+ * Make numbers clickable
+ * delete the number corresponding to the right answer
+   * Game.prototype.rightanswer
+ * Define logic for game-end
+  * Implement game music if time permits
