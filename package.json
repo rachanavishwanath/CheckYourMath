@@ -1,7 +1,7 @@
 {
-  "name": "js_project_skeleton",
+  "name": "check_your_math",
   "version": "1.0.0",
-  "description": "skeleton for new JS project",
+  "description": "",
   "main": "index.js",
   "browserslist": [
     "last 1 version",
@@ -14,8 +14,16 @@
     "webpack:watch": "webpack --watch --config webpack.dev.js",
     "webpack:build": "webpack --config webpack.prod.js  --optimize-minimize"
   },
-  "author": "mrcjbradley",
+  "author": "rachanavishwanath",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rachanavishwanath/CheckYourMath.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rachanavishwanath/CheckYourMath/issues"
+  },
+  "homepage": "https://github.com/rachanavishwanath/CheckYourMath/blob/master/README.md",
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.11.6",

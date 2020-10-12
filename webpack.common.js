@@ -11,7 +11,7 @@ module.exports = {
   },
   resolve: {
     extensions: [".js"], // if we were using React.js, we would include ".jsx"
-  },
+  }, 
   module: {
     rules: [
       {
