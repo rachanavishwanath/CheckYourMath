@@ -1,4 +1,4 @@
-# Check-Your-Math
+# CheckYourMath
 
 [Live Link coming soon](https://pages.github.com/)
 
