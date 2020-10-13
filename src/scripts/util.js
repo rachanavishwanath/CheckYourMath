@@ -5,6 +5,9 @@ const Util = {
     },
     scale(vec, m) {
         return [0, vec[1]* m]
+    },
+    number(num) {
+        return Math.round(Math.random() * num)
     }
 }
 
