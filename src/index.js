@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const num = new Numbers([80,170], 0);
   window.num = num;
   num.drawSquare(context);
-  const game = new Game(context);
+  const game = new Game(canvas);
   // const gameView = new GameView(context);
   // gameView.start();
   // game.InitialLayer(context);
