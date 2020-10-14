@@ -1,104 +1,38 @@
-import "./styles/index.scss";
-import "./images/yoda-stitch.jpg";
-import canvasExample from "./scripts/canvas";
-import Square from "./scripts/square";
-import { DOMExample } from "./scripts/DOMExample";
-const currentStateObj = {
-  currentExample: null,
-  currentEventListeners: [],
-};
+import './styles/index.scss';
+import MovingObject from './scripts/moving_object';
+import Numbers from './scripts/numbers';
+import Game from './scripts/game';
+import GameView from './scripts/game_view';
 
-document.querySelector("#canvas-demo").addEventListener("click", startCanvas);
-document.querySelector("#DOM-demo").addEventListener("click", startDOM);
+const Util = require('./scripts/util');
 
-function startDOM() {
-  unregisterEventListeners();
-  clearDemo();
-  currentStateObj.currentExample = "DOMDEMO";
-  DOMExample();
-}
-
-function startCanvas() {
-  clearDemo();
-  unregisterEventListeners();
-  currentStateObj.currentExample = "CANVASDEMO";
-  const canvas = new canvasExample();
-  canvas.createCanvas();
-  const squares = [new Square(canvas.ctx, canvas.coords, canvas.fillColor)];
-
-  let animating = true;
-
-  const animation = () => {
-    canvas.clearCanvas();
-    if (animating) squares.forEach((sq) => sq.updateSquare(canvas.fillColor));
-    squares.forEach((sq) => sq.drawSquare());
-    window.requestAnimationFrame(animation);
-    squares.forEach((sq) => {
-      if (sq.coords[0] + sq.coords[2] > window.innerWidth)
-        sq.reverseAnimation();
-      if (sq.coords[0] < 0) sq.reverseAnimation();
-    });
+function registerClick(e, clickedPos, offsetX, offsetY) {
+  clickedPos = {
+    x: e.clientX - offsetX,
+    y: e.clientY - offsetY,
   };
-
-  window.requestAnimationFrame(animation);
-
-  window.addEventListener("keydown", handleKeyDown);
-  currentStateObj.currentEventListeners.push([
-    "window",
-    "keydown",
-    handleKeyDown,
-  ]);
-
-  window.addEventListener("mousedown", handleMouseDown);
-  currentStateObj.currentEventListeners.push([
-    "window",
-    "mousedown",
-    handleMouseDown,
-  ]);
-
-  function handleKeyDown(event) {
-    if (event.which === 32) {
-      event.preventDefault();
-      squares.forEach((sq) => sq.reverseAnimation());
-      canvas.setColor(`#${Math.floor(Math.random() * 16777215).toString(16)}`);
-    }
-  }
-
-  function handleMouseDown(event) {
-    event.preventDefault();
-    squares.push(
-      new Square(
-        canvas.ctx,
-        canvas.coords.map((co) => co + 25),
-        canvas.fillColor
-      )
-    );
-    // animating = !animating;
-  }
+  alert(`clicked at ${clickedPos.x} ${clickedPos.y}`);
+  console.log(clickedPos);
+  return clickedPos;
 }
 
-function unregisterEventListeners() {
-  while (currentStateObj.currentEventListeners.length) {
-    let [
-      selector,
-      event,
-      handler,
-    ] = currentStateObj.currentEventListeners.pop();
-    if (selector === "window") {
-      window.removeEventListener(event, handler);
-      console.log(handler);
-    } else {
-      document.querySelector(selector).removeEventListener(event, handler);
-    }
-  }
-}
-
-function clearDemo() {
-  if (currentStateObj.currentExample === "CANVASDEMO")
-    document.body.removeChild(document.querySelector("canvas"));
-  if (currentStateObj.currentExample === "DOMDEMO") {
-    [...document.querySelectorAll(".card")].forEach((elem) =>
-      document.body.removeChild(elem)
-    );
-  }
-}
+document.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById("canvas");
+  const context = canvas.getContext('2d');
+  const offsetX = canvas.offsetLeft;
+  const offsetY = canvas.offsetTop;
+  console.log(`offsetX: ${offsetX} offsetY: ${offsetY}`);
+  let clickedPos;
+  // canvas.addEventListener("mousedown", (e) =>
+  //   registerClick(e, clickedPos, offsetX, offsetY)
+  // );
+  console.log(clickedPos);
+  console.log('Its working');
+  const num = new Numbers([80,170], 0);
+  window.num = num;
+  num.drawSquare(context);
+  const game = new Game(context);
+  // const gameView = new GameView(context);
+  // gameView.start();
+  // game.InitialLayer(context);
+})

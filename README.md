@@ -1,6 +1,5 @@
-# Check-Your-Math
+# CheckYourMath
 
-# CSS-Demo
 [Live Link coming soon](https://pages.github.com/)
 
 ## Overview
