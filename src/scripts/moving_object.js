@@ -1,21 +1,28 @@
-function MovingObject(obj) {
-    this.pos = obj["pos"];
-    this.vel = obj["vel"];
-    this.color = obj["color"];
-};
+export default class MovingObject {
+    constructor(obj) {
+        this.pos = obj["pos"];
+        this.vel = obj["vel"];
+        this.color = obj["color"];
+        this.text = obj["text"];
+        this.drawSquare = this.drawSquare.bind(this);
+        this.move = this.move.bind(this);
+    }
 
-MovingObject.prototype.draw = function(ctx) {
-    ctx.fillRect(20, 20, 80, 80);
-}
+    drawSquare(ctx) {
+        ctx.strokeStyle = "red";
+        ctx.strokeRect(this.pos[0], this.pos[1], 80, 80);
+        ctx.lineWidth = 2;
+        ctx.fillStyle = 'black';
+        ctx.fillRect(this.pos[0], this.pos[1], 80, 80);
+        ctx.fillStyle = this.color;
+        ctx.font = "40px Georgia";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(this.text, this.pos[0]+40, this.pos[1]+40);
+        this.move();
+    }
 
-MovingObject.prototype.move = function(){
-    for(let i = 0; i < this.pos.length; i++){
-        this.pos[i] += this.vel[i];
+    move() {
+        this.pos[1] += this.vel[1];
     }
 }
-
-MovingObject.prototype.fall = function () {
-
-};
-
-module.exports = MovingObject;

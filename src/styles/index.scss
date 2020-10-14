@@ -1,6 +1,8 @@
 @import './reset.scss';
 @import './equation.scss';
 @import './navBar.scss';
+@import './instructions.scss';
+@import './buttons.scss';
 
 body {
   background: url(../images/brickBkg3.jpg);
@@ -13,6 +15,7 @@ div.canvas-div {
   align-items: center;
   flex-direction: column;
   background-color: #fee;
-  height: 600px;
+  margin: auto;
+  height: 550px;
   width: 800px;
 }

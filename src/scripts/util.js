@@ -1,10 +1,12 @@
 const Util = {
     randomVec(length) {
-        const deg = 2 * Math.PI * Math.random();
-        return Util.scale([0, Math.cos(deg)], length);
+        return Util.scale([0, 5], length);
     },
     scale(vec, m) {
         return [0, vec[1]* m]
+    },
+    number(num) {
+        return Math.round(Math.random() * num)
     }
 }
 
