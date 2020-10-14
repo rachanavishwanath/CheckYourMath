@@ -9,7 +9,6 @@ export default class MovingObject {
     }
 
     drawSquare(ctx) {
-        console.log(this.pos);
         ctx.strokeStyle = "red";
         ctx.strokeRect(this.pos[0], this.pos[1], 80, 80);
         ctx.lineWidth = 2;
@@ -20,11 +19,12 @@ export default class MovingObject {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(this.text, this.pos[0]+40, this.pos[1]+40);
-        // this.move();
-        console.log(this.pos);
     }
 
     move() {
-        this.pos[1] += 1;
+        this.pos[1] += 0.3;
+    }
+
+    isCollidedWith(otherNumber) { 
     }
 }
