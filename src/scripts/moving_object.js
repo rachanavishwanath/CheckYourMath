@@ -19,10 +19,12 @@ export default class MovingObject {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(this.text, this.pos[0]+40, this.pos[1]+40);
-        this.move();
     }
 
     move() {
-        this.pos[1] += this.vel[1];
+        this.pos[1] += 0.3;
+    }
+
+    isCollidedWith(otherNumber) { 
     }
 }
