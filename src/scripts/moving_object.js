@@ -5,6 +5,7 @@ export default class MovingObject {
         this.color = obj["color"];
         this.text = obj["text"];
         this.drawSquare = this.drawSquare.bind(this);
+        this.move = this.move.bind(this);
     }
 
     drawSquare(ctx) {

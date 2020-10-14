@@ -2,6 +2,7 @@
 @import './equation.scss';
 @import './navBar.scss';
 @import './instructions.scss';
+@import './buttons.scss';
 
 body {
   background: url(../images/brickBkg3.jpg);
@@ -15,6 +16,6 @@ div.canvas-div {
   flex-direction: column;
   background-color: #fee;
   margin: auto;
-  height: 600px;
+  height: 550px;
   width: 800px;
 }
