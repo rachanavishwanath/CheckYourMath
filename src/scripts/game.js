@@ -50,11 +50,12 @@ export default class Game {
       y: e.clientY,
       // y: Math.abs(e.clientY - offsetY) - 25,
     };
-    debugger;
     alert(`clicked at ${clickedPos.x} ${clickedPos.y}`);
-    let numbers = Object.values(this.fallingNumbers);
+    const currenCol = this.currentColumnForUserClick(clickedPos.x);
+    let numbers = this.fallingNumbers[currenCol];
     for (let i = 0; i < numbers.length; i++) {
       let num = numbers[i];
+      debugger
       const left = num.pos[0];
       const right = num.pos[0] + 80;
       const top = num.pos[1];
@@ -73,6 +74,18 @@ export default class Game {
         break;
       }
     }
+  }
+
+  currentColumnForUserClick(xOfClicked){
+        let i = 0;
+        let x = 0;
+        while (i < 10){
+            if (xOfClicked > x && xOfClicked < x + 80) {
+                return x
+            }
+            x += 80;
+            i += 1;
+        }
   }
 
   drawEquation(context, equation) {
@@ -108,7 +121,6 @@ export default class Game {
 
   randomPositionforFallingNumbers() {
     const x = DIM_X[Math.round(Math.random() * 10) % 10];
-    console.log(this.fallingNumbers);
     const y = 25;
     return [x, y];
   }
@@ -148,20 +160,15 @@ export default class Game {
   }
 
   detectCollision(pos, currentFallingPosition) {
-    debugger;
     const currentColumn = this.fallingNumbers[pos[0]];
     let otherNumber;
-    console.log(this.fallingNumbers);
-    debugger; 
     // refactor and this will be perfect
     // const height = (currentColumn.length - 1) * 81
     // return pos[1] >= (393 - height)
     // for (let i = 0; i < currentColumn.length; i++) {
-      debugger;
       if (currentFallingPosition != 0) {
     //   if (i < currentFallingPosition) {
         const num = currentColumn[currentFallingPosition]
-        debugger;
         otherNumber = currentColumn[currentFallingPosition - 1];
         return num.checkCollisionWith(otherNumber);
       }
@@ -170,12 +177,9 @@ export default class Game {
 
   moveObjects() {
     let numbers = Object.values(this.fallingNumbers);
-    console.log(numbers);
     for (let i = 0; i < numbers.length; i++) {
       for (let j = 0; j < numbers[i].length; j++) {
-        debugger;
         if (!this.detectCollision(numbers[i][j].pos, j)) {
-          debugger;
           numbers[i][j].move();
         }
       }

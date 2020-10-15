@@ -31,7 +31,6 @@ export default class MovingObject {
     }
 
     checkCollisionWith(otherNumber) { 
-        debugger
         return this.pos[1] >= (otherNumber.pos[1] - 80)
     }
 }
