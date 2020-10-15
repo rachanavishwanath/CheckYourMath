@@ -6,6 +6,7 @@ export default class MovingObject {
         this.text = obj["text"];
         this.drawSquare = this.drawSquare.bind(this);
         this.move = this.move.bind(this);
+        this.checkCollisionWith = this.checkCollisionWith.bind(this);
     }
 
     drawSquare(ctx) {
@@ -25,11 +26,11 @@ export default class MovingObject {
         if (this.pos[1] >= 393) {
             this.pos[1]
         } else {
-            this.pos[1] += 0.3;
+            this.pos[1] += 10;
         }
     }
 
-    isCollidedWith(otherNumber) { 
-        
+    checkCollisionWith(otherNumber) { 
+        return this.pos[1] >= (otherNumber.pos[1] - 80)
     }
 }
