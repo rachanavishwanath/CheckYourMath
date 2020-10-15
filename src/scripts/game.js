@@ -17,6 +17,7 @@ export default class Game {
         this.bottomline = {};
         this.fallingNumbers = [];
         this.frameH = 0;
+        this.userClicks = {};
 
         this.InitialLayer = this.InitialLayer.bind(this);
         this.registerClick = this.registerClick.bind(this);
@@ -42,25 +43,33 @@ export default class Game {
 
     registerClick(e, offsetX, offsetY, context) {
         // console.log(`offsetX: ${offsetX} offsetY: ${offsetY}`);
+        debugger
         const clickedPos = {
-            x: e.clientX,
+            x: e.clientX - offsetX,
             y: e.clientY,
+          // y: Math.abs(e.clientY - offsetY) - 25,
         };
+        debugger
         alert(`clicked at ${clickedPos.x} ${clickedPos.y}`);
         for (let i = 0; i < this.fallingNumbers.length; i++) {
-        let num = this.fallingNumbers[i];
-        const left = num.pos[0];
-        const right = num.pos[0] + 80;
-        const top = num.pos[1];
-        const bottom = num.pos[1] + 80;
-        if (
-            clickedPos.x >= left &&
-            clickedPos.x <= right &&
-            clickedPos.y >= top &&
-            clickedPos.y <= bottom
-        ) {
-            alert(num.text);
-        }
+            let num = this.fallingNumbers[i];
+            const left = num.pos[0];
+            const right = num.pos[0] + 80;
+            const top = num.pos[1];
+            const bottom = num.pos[1] + 80;
+            if (
+                clickedPos.x >= left &&
+                clickedPos.x <= right &&
+                // clickedPos.y >= top &&
+                clickedPos.y <= bottom
+            ) {
+                debugger
+                console.log(this.userClicks);
+                this.userClicks[num.pos] = num;
+                alert(num.text);
+                console.log(this.userClicks);
+                break;
+            }
         }
     }
 
@@ -86,8 +95,8 @@ export default class Game {
     drawNumbers(context, bottomline, fallingNumbers) {
 
         Object.keys(bottomline).forEach(pos => {
-            console.log('redraw bottomLine')
-            console.log(bottomline);
+            // console.log('redraw bottomLine')
+            // console.log(bottomline);
             const sq = bottomline[pos]; 
             // console.log(sq);
             sq.drawSquare(context);
@@ -118,14 +127,13 @@ export default class Game {
     }
 
     animate(context, equation, bottomline, fallingNumbers) {
-
         this.frameH += 1;
         if (this.frameH > 250) {
             this.fallingNumber(context, fallingNumbers);
             this.frameH = 0;
         }
         // clear the canvas
-        context.clearRect(0, 0, 800, 600);
+        context.clearRect(0, 0, WIDTH, HEIGHT);
         console.log("Begin animate");
         this.drawEquation(context, equation);
         // update the pos
