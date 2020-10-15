@@ -16,11 +16,11 @@ export default class Equation {
 
     shuffled (unshuffled) {
         return unshuffled
-        .split("")
-        .map((a) => ({ sort: Math.random(), value: a }))
-        .sort((a, b) => a.sort - b.sort)
-        .map((a) => a.value)
-        .join("");
+                .split("")
+                .map((a) => ({ sort: Math.random(), value: a }))
+                .sort((a, b) => a.sort - b.sort)
+                .map((a) => a.value)
+                .join("");
     };
 
     createEquation() {

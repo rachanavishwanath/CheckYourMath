@@ -22,9 +22,14 @@ export default class MovingObject {
     }
 
     move() {
-        this.pos[1] += 0.3;
+        if (this.pos[1] >= 393) {
+            this.pos[1]
+        } else {
+            this.pos[1] += 0.3;
+        }
     }
 
     isCollidedWith(otherNumber) { 
+        
     }
 }
