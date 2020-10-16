@@ -71,25 +71,51 @@ export default class Game {
         this.context.clearRect(0, 0, WIDTH, HEIGHT);
         document.getElementById("endGame").classList.remove("hidden"); 
     }
-
-    removeRightAnswerSquare(currentCol) {
+    
+    removeRightAnswerSquare() {
         console.log(this.rightAnswer);
         let that  = this;
-        this.userClicks.forEach((num) => {
-        if (that.rightAnswer < 10) {
-            debugger;
-            if (num.text === this.rightAnswer && num.pos[1] === 474) {
-                debugger;
-                delete this.bottomline[num.pos[0]];
-                this.userClicks = [];
-                that.newEquation = that.equation.createEquation();
-                console.log(this.bottomline);
-                console.log(`right answer`);
-            } else {
-                this.fallingNumbers[currentCol];
-            }
+        let arr;
+        for (let i = 0; i < this.userClicks.length; i++) {
+            const num = this.userClicks[i];
+            arr = num.split('_');
+            console.log(num);
+            console.log(arr);
+            if (parseInt(arr[2]) === that.rightAnswer){
+                if (parseInt(arr[1]) === 0) {
+                    console.log(arr[1]);
+                    delete that.bottomline[arr[0]];
+                    that.newEquation = that.equation.createEquation();
+                    that.rightAnswer = that.equation.rightAnswer(
+                        that.newEquation
+                    );
+                    that.userClicks = [];
+                    break;
+                } else {
+                    console.log(arr[1]);
+                    that.fallingNumbers[arr[0]].splice(i - 1, 1);
+                    that.newEquation = that.equation.createEquation();
+                    that.rightAnswer = that.equation.rightAnswer(
+                        that.newEquation
+                    );
+                    that.userClicks = [];
+                    break;
+                }
+            }              
         }
-        });
+        // if (that.rightAnswer < 10) {
+        //     debugger;
+        //     if (num.text === this.rightAnswer && num.pos[1] === 474) {
+        //         debugger;
+        //         delete this.bottomline[num.pos[0]];
+        //         this.userClicks = [];
+        //         that.newEquation = that.equation.createEquation();
+        //         console.log(this.bottomline);
+        //         console.log(`right answer`);
+        //     } else {
+        //         this.fallingNumbers[currentCol];
+        //     }
+        // }
     }
 
     registerClick(e) {
@@ -104,40 +130,81 @@ export default class Game {
         alert(`clicked at ${clickedPos.x} ${clickedPos.y}`);
         const currentCol = this.currentColumnForUserClick(clickedPos.x);
         let fNumbers;
-        let allNumbers;
+        let concatString;
+        let num;
         let left;
         let right;
         let top;
         let bottom;
-        let bNumbers = [this.bottomline[currentCol]];
-        if (this.fallingNumbers.hasOwnProperty(currentCol)) {
-            fNumbers = this.fallingNumbers[currentCol];
-            allNumbers = fNumbers.concat(bNumbers);
-        } else {
-            allNumbers = bNumbers;
-        }
-        debugger;
-        console.log(allNumbers);
-        for (let i = 0; i < allNumbers.length; i++) {
-        let num = allNumbers[i];
-        const left = num.pos[0];
-        const right = num.pos[0] + 80;
-        const top = num.pos[1];
-        const bottom = num.pos[1] + 80;
-        if (
-            clickedPos.x >= left &&
-            clickedPos.x <= right &&
-            // clickedPos.y >= top &&
-            clickedPos.y <= bottom
-        )   {
+        let bNumbers;
+        if (this.bottomline.hasOwnProperty(currentCol)) {
+            bNumbers = [this.bottomline[currentCol]];
+            for (let i = 0; i < bNumbers.length; i++) {
+              num = bNumbers[i];
+              left = num.pos[0];
+              right = num.pos[0] + 80;
+              bottom = num.pos[1];
+              top = num.pos[1] - 80;
+              if (
+                clickedPos.x > left &&
+                clickedPos.x < right &&
+                clickedPos.y > top &&
+                clickedPos.y < bottom
+              ) {
                 console.log(this.userClicks);
-                this.userClicks.push(num);
+                concatString = `${num.pos[0]}_0_${num.text}`;
+                this.userClicks.push(concatString);
                 alert(num.text);
                 console.log(this.userClicks);
                 break;
+              }
             }
         }
-        this.removeRightAnswerSquare(currentCol);
+        if (this.fallingNumbers.hasOwnProperty(currentCol)) {
+            fNumbers = this.fallingNumbers[currentCol];
+            for (let i = 0; i < fNumbers.length; i++) {
+              num = fNumbers[i];
+              left = num.pos[0];
+              right = num.pos[0] + 80;
+              bottom = num.pos[1];
+              top = num.pos[1] - 80;
+              if (
+                clickedPos.x > left &&
+                clickedPos.x < right &&
+                clickedPos.y > top &&
+                clickedPos.y < bottom
+              ) {
+                console.log(this.userClicks);
+                concatString = `${num.pos[0]}_${i+1}_${num.text}`;
+                this.userClicks.push(concatString);
+                alert(num.text);
+                console.log(this.userClicks);
+                break;
+              }
+            }
+        }
+        // debugger;
+        // for (let i = 0; i < bNumbers.length; i++) {
+        //     num = bNumbers[i];
+        //     left = num.pos[0];
+        //     right = num.pos[0] + 80;
+        //     bottom = num.pos[1];
+        //     top = num.pos[1] - 80;
+        //   if (
+        //     clickedPos.x > left &&
+        //     clickedPos.x < right &&
+        //     clickedPos.y > top &&
+        //     clickedPos.y < bottom
+        //   ) {
+        //     console.log(this.userClicks);
+        //     concatString = `${num.pos[0]}_0_${num.text}`;
+        //     this.userClicks.push(num);
+        //     alert(num.text);
+        //     console.log(this.userClicks);
+        //     break;
+        //   }
+        // }
+        this.removeRightAnswerSquare();
     }
 
     currentColumnForUserClick(xOfClicked) {
@@ -162,11 +229,11 @@ export default class Game {
         let num;
         let posAtX = 0;
         for (let i = 0; i < NumColumns; i++) {
-        num = Math.round(Math.random() * 10) % 10;
-        const newNumber = new Numbers([posAtX, 474], num);
-        newNumber.drawSquare(this.context);
-        this.bottomline[posAtX] = newNumber;
-        posAtX += 80;
+            num = Math.round(Math.random() * 10) % 10;
+            const newNumber = new Numbers([posAtX, 474], num);
+            newNumber.drawSquare(this.context);
+            this.bottomline[posAtX] = newNumber;
+            posAtX += 80;
         }
     }
 
@@ -203,7 +270,7 @@ export default class Game {
     animate() {
         if (this.playing === true) {
         this.frameH += 1;
-        if (this.frameH > 50) {
+        if (this.frameH > 250) {
             this.fallingNumber();
             this.frameH = 0;
         }

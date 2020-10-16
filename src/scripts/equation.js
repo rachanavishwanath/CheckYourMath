@@ -24,7 +24,7 @@ export default class Equation {
     };
 
     createEquation() {
-        const length = Math.round((Math.random() * 10) % 3) + 1;
+        const length = Math.round((Math.random() * 10) % 1) + 1;
         const startNum1 = Math.round((Math.random() * 10) % 4) + 1;
         const startNum2 = Math.round((Math.random() * 10) % 4) + 1;
         const mathOp = MATHOP[Math.round((Math.random() * 10) % 2)];
