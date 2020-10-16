@@ -11,13 +11,15 @@ const DIM_Y = 600;
 
 export default class Game {
   constructor(canvas) {
-    const context = canvas.getContext("2d");
+    this.context = canvas.getContext("2d");
     const offsetX = canvas.offsetLeft;
     const offsetY = canvas.offsetTop;
     this.bottomline = {};
     this.fallingNumbers = {};
     this.frameH = 0;
-    this.userClicks = {};
+    this.userClicks = [];
+    this.playing = false;
+    this.frameId = null;
 
     this.InitialLayer = this.InitialLayer.bind(this);
     this.registerClick = this.registerClick.bind(this);
@@ -26,36 +28,96 @@ export default class Game {
     this.drawNumbers = this.drawNumbers.bind(this);
     this.animate = this.animate.bind(this);
     this.detectCollision = this.detectCollision.bind(this);
+    this.removeRightAnswerSquare = this.removeRightAnswerSquare.bind(this);
+    this.keyHandler = this.keyHandler.bind(this);
+    this.gameOver = this.gameOver.bind(this);
 
-    this.bottomline = this.InitialLayer(context, NumColumns, this.bottomline);
-    this.fallingNumbers = this.fallingNumber(context, this.fallingNumbers);
+    this.bottomline = this.InitialLayer(this.context, NumColumns, this.bottomline);
+    this.fallingNumbers = this.fallingNumber(this.context, this.fallingNumbers);
 
     const equation = new Equation();
     const newEq = equation.createEquation();
-    this.drawEquation(context, newEq);
+    // this.drawEquation(this.context, newEq);
     this.rightAnswer = equation.rightAnswer(newEq);
 
-    this.animate(context, newEq, this.bottomline, this.fallingNumbers);
+    this.animate(this.context, newEq, this.bottomline, this.fallingNumbers);
 
     canvas.addEventListener("mousedown", (e) =>
-      this.registerClick(e, offsetX, offsetY, context)
+      this.registerClick(e, offsetX, offsetY, this.context)
+    );
+    document.addEventListener("keydown", (e) =>
+      this.keyHandler(e, this.context, this.bottomline, this.fallingNumbers)
     );
   }
 
-  registerClick(e, offsetX, offsetY, context) {
-    // console.log(`offsetX: ${offsetX} offsetY: ${offsetY}`);
+  keyHandler(e, context, bottomline, fallingNumbers) {
     debugger;
+    e.preventDefault();
+    if (e.key == "Enter") {
+      this.playing = true;
+      this.restartGame(context, bottomline, fallingNumbers);
+    }
+  }
+
+  restartGame(context, bottomline, fallingNumbers) {
+    document.getElementById("startGame").classList.add("hidden");
+    const equation = new Equation();
+    const newEq = equation.createEquation();
+    this.animate(context, newEq, bottomline, fallingNumbers);
+  }
+
+    gameOver(){
+        if (this.frameId) {
+            cancelAnimationFrame(this.frameId);
+        }
+        debugger
+        this.playing = false;
+        console.log(this.context);
+        this.context.clearRect(0, 0, WIDTH, HEIGHT);
+        document.getElementById("endGame").classList.add("visible");
+    }
+
+    updateCanvas(){
+
+    }
+
+    removeRightAnswerSquare(currentCol) {
+        console.log(this.userClicks);
+        console.log(this.bottomline);
+        this.userClicks.forEach((num) => {
+        if (this.rightAnswer < 10) {
+            if (num.text === this.rightAnswer && num.pos[1] === 474) {
+            delete this.bottomline[num.pos[0]];
+            this.userClicks = [];
+            console.log(this.bottomline);
+            console.log(`right answer`);
+            } else if (num.text === this.rightAnswer) {
+            }
+        }
+        });
+        console.log(this.rightAnswer);
+    }
+
+  registerClick(e, offsetX, offsetY) {
     const clickedPos = {
       x: e.clientX - offsetX,
-      y: e.clientY,
-      // y: Math.abs(e.clientY - offsetY) - 25,
+      y: Math.abs(e.clientY - offsetY) - 25,
     };
     alert(`clicked at ${clickedPos.x} ${clickedPos.y}`);
-    const currenCol = this.currentColumnForUserClick(clickedPos.x);
-    let numbers = this.fallingNumbers[currenCol];
-    for (let i = 0; i < numbers.length; i++) {
-      let num = numbers[i];
-      debugger
+    const currentCol = this.currentColumnForUserClick(clickedPos.x);
+    let fNumbers;
+    let allNumbers;
+    let bNumbers = [this.bottomline[currentCol]];
+    if (this.fallingNumbers.hasOwnProperty(currentCol)) {
+      fNumbers = this.fallingNumbers[currentCol];
+      allNumbers = fNumbers.concat(bNumbers);
+    } else {
+      allNumbers = bNumbers;
+    }
+    debugger;
+    console.log(allNumbers);
+    for (let i = 0; i < allNumbers.length; i++) {
+      let num = allNumbers[i];
       const left = num.pos[0];
       const right = num.pos[0] + 80;
       const top = num.pos[1];
@@ -63,29 +125,29 @@ export default class Game {
       if (
         clickedPos.x >= left &&
         clickedPos.x <= right &&
-        // clickedPos.y >= top &&
+        clickedPos.y >= top &&
         clickedPos.y <= bottom
       ) {
-        debugger;
         console.log(this.userClicks);
-        this.userClicks[num.pos] = num;
+        this.userClicks.push(num);
         alert(num.text);
         console.log(this.userClicks);
         break;
       }
     }
+    this.removeRightAnswerSquare(currentCol);
   }
 
-  currentColumnForUserClick(xOfClicked){
-        let i = 0;
-        let x = 0;
-        while (i < 10){
-            if (xOfClicked > x && xOfClicked < x + 80) {
-                return x
-            }
-            x += 80;
-            i += 1;
-        }
+  currentColumnForUserClick(xOfClicked) {
+    let i = 0;
+    let x = 0;
+    while (i < 10) {
+      if (xOfClicked > x && xOfClicked < x + 80) {
+        return x;
+      }
+      x += 80;
+      i += 1;
+    }
   }
 
   drawEquation(context, equation) {
@@ -133,46 +195,39 @@ export default class Game {
     fallingNumbers[pos[0]] = fallingNumbers[pos[0]] || [];
     fallingNumbers[pos[0]].push(fallingNum);
     if (fallingNumbers[pos[0]].length === 6) {
-        alert(`Game Over`);
-    } 
+        debugger
+      this.gameOver();
+    }
     return fallingNumbers;
   }
 
   animate(context, equation, bottomline, fallingNumbers) {
-    this.frameH += 1;
-    if (this.frameH > 50) {
-      this.fallingNumber(context, fallingNumbers);
-      this.frameH = 0;
+    if (this.playing === true) {
+      this.frameH += 1;
+      if (this.frameH > 50) {
+        this.fallingNumber(context, fallingNumbers);
+        this.frameH = 0;
+      }
+      context.clearRect(0, 0, WIDTH, HEIGHT);
+      this.drawEquation(context, equation);
+      this.moveObjects();
+      this.drawNumbers(context, bottomline, fallingNumbers);
+
+      const callback = () =>
+        this.animate(context, equation, bottomline, fallingNumbers);
+
+      this.frameId = requestAnimationFrame(callback);
     }
-    // clear the canvas
-    context.clearRect(0, 0, WIDTH, HEIGHT);
-    console.log("Begin animate");
-    this.drawEquation(context, equation);
-    // update the pos
-    this.moveObjects();
-    // redraw canvas
-    this.drawNumbers(context, bottomline, fallingNumbers);
-
-    const callback = () =>
-      this.animate(context, equation, bottomline, fallingNumbers);
-
-    requestAnimationFrame(callback);
   }
 
   detectCollision(pos, currentFallingPosition) {
     const currentColumn = this.fallingNumbers[pos[0]];
     let otherNumber;
-    // refactor and this will be perfect
-    // const height = (currentColumn.length - 1) * 81
-    // return pos[1] >= (393 - height)
-    // for (let i = 0; i < currentColumn.length; i++) {
-      if (currentFallingPosition != 0) {
-    //   if (i < currentFallingPosition) {
-        const num = currentColumn[currentFallingPosition]
-        otherNumber = currentColumn[currentFallingPosition - 1];
-        return num.checkCollisionWith(otherNumber);
-      }
-    // }
+    if (currentFallingPosition != 0) {
+      const num = currentColumn[currentFallingPosition];
+      otherNumber = currentColumn[currentFallingPosition - 1];
+      return num.checkCollisionWith(otherNumber);
+    }
   }
 
   moveObjects() {
@@ -180,15 +235,13 @@ export default class Game {
     for (let i = 0; i < numbers.length; i++) {
       for (let j = 0; j < numbers[i].length; j++) {
         if (!this.detectCollision(numbers[i][j].pos, j)) {
-          numbers[i][j].move();
+          const foundBottomLine = this.bottomline.hasOwnProperty([
+            numbers[i][j].pos[0],
+          ]);
+          numbers[i][j].move(foundBottomLine);
         }
       }
     }
   }
 
-  clickedNumber() {}
-
-  stopFallingNumber() {}
-  start() {}
-  gameOver() {}
 }
