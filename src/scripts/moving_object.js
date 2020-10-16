@@ -23,7 +23,6 @@ export default class MovingObject {
     }
 
     move(foundBottomLine) {
-        console.log(foundBottomLine);
         if (foundBottomLine && this.pos[1] >= 393) {
             this.pos[1];
         } else if (!foundBottomLine && this.pos[1] >= 473) {

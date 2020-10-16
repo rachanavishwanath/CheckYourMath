@@ -36,7 +36,6 @@ export default class Equation {
             startNum2,
             startNum2 + length
         );
-        // console.log(length, startNum1, startNum2, mathOp, num1, num2);
         if (parseInt(num1) < parseInt(num2) && mathOp === '-') {
             const temp = num1;
             num1 = num2;
