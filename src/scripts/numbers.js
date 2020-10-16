@@ -1,13 +1,26 @@
 import MovingObject from "./moving_object";
 const Util = require("./util");
+// const COLORS = {
+//   0: "#CCFF00",
+//   1: "#ff0000",
+//   2: "#ff8000",
+//   3: "#ffff00",
+//   4: "#00ff80",
+//   5: "#FBAED2",
+//   6: "#FF5349",
+//   7: "#00ffcc",
+//   8: "#00f2ff",
+//   9: "#ff0073",
+// };
+
 const COLORS = {
-  0: "#CCFF00",
+  0: "#ccff00",
   1: "#ff0000",
   2: "#ff8000",
   3: "#ffff00",
   4: "#00ff80",
-  5: "#FBAED2",
-  6: "#FF5349",
+  5: "#fbaed2",
+  6: "#ff5349",
   7: "#00ffcc",
   8: "#00f2ff",
   9: "#ff0073",
@@ -16,6 +29,7 @@ export default class Numbers {
     constructor(pos, text) {
         // number inside square
         this.text = text;
+        this.click = false;
         const obj = {
           pos: pos,
           vel: Util.randomVec(2),

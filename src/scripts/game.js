@@ -7,7 +7,18 @@ const NumColumns = 10;
 const DIM_X = [0, 80, 160, 240, 320, 400, 480, 560, 640, 720];
 const WIDTH = 800;
 const HEIGHT = 600;
-const DIM_Y = 600;
+const COLORS = {
+  0: "#ccff00",
+  1: "#ff0000",
+  2: "#ff8000",
+  3: "#ffff00",
+  4: "#00ff80",
+  5: "#fbaed2",
+  6: "#ff5349",
+  7: "#00ffcc",
+  8: "#00f2ff",
+  9: "#ff0073",
+};
 
 export default class Game {
     constructor(canvas) {
@@ -23,7 +34,7 @@ export default class Game {
         this.equation = new Equation();
         this.newEquation = null;
         this.rightAnswer = null;
-
+        this.fillStyle = "black";
 
         this.InitialLayer = this.InitialLayer.bind(this);
         this.registerClick = this.registerClick.bind(this);
@@ -35,27 +46,28 @@ export default class Game {
         this.removeRightAnswerSquare = this.removeRightAnswerSquare.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
         this.gameOver = this.gameOver.bind(this);
+        this.checkDoubleDigitAnswer = this.checkDoubleDigitAnswer.bind(this);
+        this.selectUnselectNumber = this.selectUnselectNumber.bind(this);
 
         canvas.addEventListener("mousedown", (e) =>
-        this.registerClick(e)
+            this.registerClick(e)
         );
         document.addEventListener("keydown", (e) =>
-        this.keyHandler(e)
+            this.keyHandler(e)
         );
     }
 
     keyHandler(e) {
         e.preventDefault();
         if (e.key == "Enter") {
-        this.playing = true;
-        this.restartGame();
+            this.playing = true;
+            this.restartGame();
         }
     }
 
     restartGame() {
         document.getElementById("startGame").classList.add("hidden");
         document.getElementById("endGame").classList.add("hidden");
-        // const equation = new Equation();
         this.newEquation = this.equation.createEquation();
         this.rightAnswer = this.equation.rightAnswer(this.newEquation);
         this.InitialLayer();
@@ -76,6 +88,7 @@ export default class Game {
         console.log(this.rightAnswer);
         let that  = this;
         let arr;
+        let concatString;
         for (let i = 0; i < this.userClicks.length; i++) {
             const num = this.userClicks[i];
             arr = num.split('_');
@@ -83,7 +96,6 @@ export default class Game {
             console.log(arr);
             if (parseInt(arr[2]) === that.rightAnswer){
                 if (parseInt(arr[1]) === 0) {
-                    console.log(arr[1]);
                     delete that.bottomline[arr[0]];
                     that.newEquation = that.equation.createEquation();
                     that.rightAnswer = that.equation.rightAnswer(
@@ -92,7 +104,6 @@ export default class Game {
                     that.userClicks = [];
                     break;
                 } else {
-                    console.log(arr[1]);
                     that.fallingNumbers[arr[0]].splice(i - 1, 1);
                     that.newEquation = that.equation.createEquation();
                     that.rightAnswer = that.equation.rightAnswer(
@@ -101,30 +112,22 @@ export default class Game {
                     that.userClicks = [];
                     break;
                 }
-            }              
+            } else {
+                concatString += arr[2];
+                this.checkDoubleDigitAnswer(concatString);
+            }           
         }
-        // if (that.rightAnswer < 10) {
-        //     debugger;
-        //     if (num.text === this.rightAnswer && num.pos[1] === 474) {
-        //         debugger;
-        //         delete this.bottomline[num.pos[0]];
-        //         this.userClicks = [];
-        //         that.newEquation = that.equation.createEquation();
-        //         console.log(this.bottomline);
-        //         console.log(`right answer`);
-        //     } else {
-        //         this.fallingNumbers[currentCol];
-        //     }
-        // }
+    }
+
+    checkDoubleDigitAnswer(concatString) {
+        if (parseInt(concatString) === this.rightAnswer) {
+
+        }
     }
 
     registerClick(e) {
-        console.log(this.offsetX);
-        console.log(this.offsetY);
-        debugger
         const clickedPos = {
             x: e.clientX - this.offsetX,
-            // y: e.clientY
             y: Math.abs(e.clientY - this.offsetY) - 25,
         };
         alert(`clicked at ${clickedPos.x} ${clickedPos.y}`);
@@ -151,12 +154,12 @@ export default class Game {
                 clickedPos.y > top &&
                 clickedPos.y < bottom
               ) {
-                console.log(this.userClicks);
-                concatString = `${num.pos[0]}_0_${num.text}`;
-                this.userClicks.push(concatString);
-                alert(num.text);
-                console.log(this.userClicks);
-                break;
+                    console.log('registerClick Bottom')
+                    this.selectUnselectNumber(num);
+                    concatString = `${num.pos[0]}_0_${num.text}`;
+                    this.userClicks.push(concatString);
+                    alert(num.text);
+                    break;
               }
             }
         }
@@ -174,48 +177,35 @@ export default class Game {
                 clickedPos.y > top &&
                 clickedPos.y < bottom
               ) {
-                console.log(this.userClicks);
-                concatString = `${num.pos[0]}_${i+1}_${num.text}`;
-                this.userClicks.push(concatString);
-                alert(num.text);
-                console.log(this.userClicks);
-                break;
+                    console.log("registerClick falling");
+                    this.selectUnselectNumber(num);
+                    concatString = `${num.pos[0]}_${i+1}_${num.text}`;
+                    this.userClicks.push(concatString);
+                    alert(num.text);
+                    break;
               }
             }
         }
-        // debugger;
-        // for (let i = 0; i < bNumbers.length; i++) {
-        //     num = bNumbers[i];
-        //     left = num.pos[0];
-        //     right = num.pos[0] + 80;
-        //     bottom = num.pos[1];
-        //     top = num.pos[1] - 80;
-        //   if (
-        //     clickedPos.x > left &&
-        //     clickedPos.x < right &&
-        //     clickedPos.y > top &&
-        //     clickedPos.y < bottom
-        //   ) {
-        //     console.log(this.userClicks);
-        //     concatString = `${num.pos[0]}_0_${num.text}`;
-        //     this.userClicks.push(num);
-        //     alert(num.text);
-        //     console.log(this.userClicks);
-        //     break;
-        //   }
-        // }
         this.removeRightAnswerSquare();
+    }
+
+    selectUnselectNumber(num){
+        if (num.click === true) {
+            num.click = false;
+        } else {
+            num.click = true;
+        }
     }
 
     currentColumnForUserClick(xOfClicked) {
         let i = 0;
         let x = 0;
         while (i < 10) {
-        if (xOfClicked > x && xOfClicked < x + 80) {
-            return x;
-        }
-        x += 80;
-        i += 1;
+            if (xOfClicked > x && xOfClicked < x + 80) {
+                return x;
+            }
+            x += 80;
+            i += 1;
         }
     }
 
@@ -229,9 +219,10 @@ export default class Game {
         let num;
         let posAtX = 0;
         for (let i = 0; i < NumColumns; i++) {
-            num = Math.round(Math.random() * 10) % 10;
+            num = i;
             const newNumber = new Numbers([posAtX, 474], num);
-            newNumber.drawSquare(this.context);
+            const color = newNumber.click ? "darkgrey" : "black";
+            newNumber.drawSquare(this.context, color);
             this.bottomline[posAtX] = newNumber;
             posAtX += 80;
         }
@@ -239,13 +230,15 @@ export default class Game {
 
     drawNumbers() {
         Object.keys(this.bottomline).forEach((pos) => {
-        const sq = this.bottomline[pos];
-        sq.drawSquare(this.context);
+            const sq = this.bottomline[pos];
+            const color = sq.click ? "darkgrey" : "black";
+            sq.drawSquare(this.context, color);
         });
         Object.values(this.fallingNumbers).forEach((num) => {
-        for (let i = 0; i < num.length; i++) {
-            num[i].drawSquare(this.context);
-        }
+            for (let i = 0; i < num.length; i++) {
+                const color2 = num.click ? "darkgrey" : "black";
+                num[i].drawSquare(this.context, color2);
+            }
         });
     }
 
@@ -259,30 +252,31 @@ export default class Game {
         const pos = this.randomPositionforFallingNumbers();
         const num = Math.round(Math.random() * 10) % 10;
         const fallingNum = new Numbers(pos, num);
-        fallingNum.drawSquare(this.context);
+        const color = fallingNum.click ? "darkgrey" : "black";
+        fallingNum.drawSquare(this.context, color);
         this.fallingNumbers[pos[0]] = this.fallingNumbers[pos[0]] || [];
         this.fallingNumbers[pos[0]].push(fallingNum);
         if (this.fallingNumbers[pos[0]].length === 6) {
-        this.gameOver();
+            this.gameOver();
         }
     }
 
     animate() {
         if (this.playing === true) {
-        this.frameH += 1;
-        if (this.frameH > 250) {
-            this.fallingNumber();
-            this.frameH = 0;
-        }
-        this.context.clearRect(0, 0, WIDTH, HEIGHT);
-        this.drawEquation();
-        this.moveObjects();
-        this.drawNumbers();
+            this.frameH += 1;
+            if (this.frameH > 250) {
+                this.fallingNumber();
+                this.frameH = 0;
+            }
+            this.context.clearRect(0, 0, WIDTH, HEIGHT);
+            this.drawEquation();
+            this.moveObjects();
+            this.drawNumbers();
 
-        const callback = () =>
-            this.animate();
+            const callback = () =>
+                this.animate();
 
-        this.frameId = requestAnimationFrame(callback);
+            this.frameId = requestAnimationFrame(callback);
         }
     }
 
@@ -290,23 +284,23 @@ export default class Game {
         const currentColumn = this.fallingNumbers[pos[0]];
         let otherNumber;
         if (currentFallingPosition != 0) {
-        const num = currentColumn[currentFallingPosition];
-        otherNumber = currentColumn[currentFallingPosition - 1];
-        return num.checkCollisionWith(otherNumber);
+            const num = currentColumn[currentFallingPosition];
+            otherNumber = currentColumn[currentFallingPosition - 1];
+            return num.checkCollisionWith(otherNumber);
         }
     }
 
     moveObjects() {
         let numbers = Object.values(this.fallingNumbers);
         for (let i = 0; i < numbers.length; i++) {
-        for (let j = 0; j < numbers[i].length; j++) {
-            if (!this.detectCollision(numbers[i][j].pos, j)) {
-            const foundBottomLine = this.bottomline.hasOwnProperty([
-                numbers[i][j].pos[0],
-            ]);
-            numbers[i][j].move(foundBottomLine);
+            for (let j = 0; j < numbers[i].length; j++) {
+                if (!this.detectCollision(numbers[i][j].pos, j)) {
+                    const foundBottomLine = this.bottomline.hasOwnProperty([
+                        numbers[i][j].pos[0],
+                    ]);
+                    numbers[i][j].move(foundBottomLine);
+                }
             }
-        }
         }
     }
 
