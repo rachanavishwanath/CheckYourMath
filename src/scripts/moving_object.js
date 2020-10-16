@@ -13,24 +13,26 @@ export default class MovingObject {
         ctx.strokeStyle = "red";
         ctx.strokeRect(this.pos[0], this.pos[1], 80, 80);
         ctx.lineWidth = 2;
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = "black";
         ctx.fillRect(this.pos[0], this.pos[1], 80, 80);
         ctx.fillStyle = this.color;
         ctx.font = "40px Georgia";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(this.text, this.pos[0]+40, this.pos[1]+40);
+        ctx.fillText(this.text, this.pos[0] + 40, this.pos[1] + 40);
     }
 
-    move() {
-        if (this.pos[1] >= 393) {
-            this.pos[1]
+    move(foundBottomLine) {
+        if (foundBottomLine && this.pos[1] >= 393) {
+            this.pos[1];
+        } else if (!foundBottomLine && this.pos[1] >= 473) {
+            this.pos[1];
         } else {
-            this.pos[1] += 10;
+          this.pos[1] += 10;
         }
     }
 
-    checkCollisionWith(otherNumber) { 
-        return this.pos[1] >= (otherNumber.pos[1] - 80)
+    checkCollisionWith(otherNumber) {
+        return this.pos[1] >= otherNumber.pos[1] - 80;
     }
 }

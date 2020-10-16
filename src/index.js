@@ -20,18 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const context = canvas.getContext('2d');
   const offsetX = canvas.offsetLeft;
   const offsetY = canvas.offsetTop;
-  // console.log(`offsetX: ${offsetX} offsetY: ${offsetY}`);
   let clickedPos;
-  // canvas.addEventListener("mousedown", (e) =>
-  //   registerClick(e, clickedPos, offsetX, offsetY)
-  // );
-  // console.log(clickedPos);
   console.log('Its working');
-  const num = new Numbers([80,170], 0);
-  window.num = num;
-  num.drawSquare(context);
   const game = new Game(canvas);
-  // const gameView = new GameView(context);
-  // gameView.start();
-  // game.InitialLayer(context);
 })
