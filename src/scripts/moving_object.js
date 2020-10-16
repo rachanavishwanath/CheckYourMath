@@ -28,7 +28,7 @@ export default class MovingObject {
         } else if (!foundBottomLine && this.pos[1] >= 473) {
             this.pos[1];
         } else {
-          this.pos[1] += 10;
+          this.pos[1] += 0.3;
         }
     }
 
