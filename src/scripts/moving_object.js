@@ -10,7 +10,6 @@ export default class MovingObject {
     }
 
     drawSquare(ctx, color) {
-        debugger
         ctx.strokeStyle = "red";
         ctx.strokeRect(this.pos[0], this.pos[1], 80, 80);
         ctx.lineWidth = 2;
@@ -23,13 +22,13 @@ export default class MovingObject {
         ctx.fillText(this.text, this.pos[0] + 40, this.pos[1] + 40);
     }
 
-    move(foundBottomLine) {
+    move(foundBottomLine, fallSpeed) {
         if (foundBottomLine && this.pos[1] >= 393) {
             this.pos[1];
         } else if (!foundBottomLine && this.pos[1] >= 473) {
             this.pos[1];
         } else {
-          this.pos[1] += 0.3;
+          this.pos[1] += fallSpeed;
         }
     }
 

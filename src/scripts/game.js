@@ -7,18 +7,6 @@ const NumColumns = 10;
 const DIM_X = [0, 80, 160, 240, 320, 400, 480, 560, 640, 720];
 const WIDTH = 800;
 const HEIGHT = 600;
-const COLORS = {
-  0: "#ccff00",
-  1: "#ff0000",
-  2: "#ff8000",
-  3: "#ffff00",
-  4: "#00ff80",
-  5: "#fbaed2",
-  6: "#ff5349",
-  7: "#00ffcc",
-  8: "#00f2ff",
-  9: "#ff0073",
-};
 
 export default class Game {
     constructor(canvas) {
@@ -35,6 +23,9 @@ export default class Game {
         this.newEquation = null;
         this.rightAnswer = null;
         this.fillStyle = "black";
+        this.fallSpeed = 0.3;
+        this.frequency = 250;
+        this.numOfEquationsSolved = 0;
 
         this.InitialLayer = this.InitialLayer.bind(this);
         this.registerClick = this.registerClick.bind(this);
@@ -43,11 +34,12 @@ export default class Game {
         this.drawNumbers = this.drawNumbers.bind(this);
         this.animate = this.animate.bind(this);
         this.detectCollision = this.detectCollision.bind(this);
-        this.removeRightAnswerSquare = this.removeRightAnswerSquare.bind(this);
+        this.rightAnswerCheck = this.rightAnswerCheck.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
         this.gameOver = this.gameOver.bind(this);
         this.checkDoubleDigitAnswer = this.checkDoubleDigitAnswer.bind(this);
         this.selectUnselectNumber = this.selectUnselectNumber.bind(this);
+        this.singleDigitAnswer = this.singleDigitAnswer.bind(this);
 
         canvas.addEventListener("mousedown", (e) =>
             this.registerClick(e)
@@ -84,44 +76,53 @@ export default class Game {
         document.getElementById("endGame").classList.remove("hidden"); 
     }
     
-    removeRightAnswerSquare() {
+    rightAnswerCheck() {
         console.log(this.rightAnswer);
         let that  = this;
         let arr;
-        let concatString;
+        let concatString = "";
         for (let i = 0; i < this.userClicks.length; i++) {
             const num = this.userClicks[i];
             arr = num.split('_');
-            console.log(num);
-            console.log(arr);
             if (parseInt(arr[2]) === that.rightAnswer){
-                if (parseInt(arr[1]) === 0) {
-                    delete that.bottomline[arr[0]];
-                    that.newEquation = that.equation.createEquation();
-                    that.rightAnswer = that.equation.rightAnswer(
-                        that.newEquation
-                    );
-                    that.userClicks = [];
-                    break;
-                } else {
-                    that.fallingNumbers[arr[0]].splice(i - 1, 1);
-                    that.newEquation = that.equation.createEquation();
-                    that.rightAnswer = that.equation.rightAnswer(
-                        that.newEquation
-                    );
-                    that.userClicks = [];
-                    break;
-                }
+                that.singleDigitAnswer(num);
+                that.newEquation = that.equation.createEquation();
+                that.rightAnswer = that.equation.rightAnswer(that.newEquation);
+                that.fallSpeed += 0.1;
+                this.frequency -= 25;
+                this.numOfEquationsSolved += 1;
+                that.userClicks = [];
             } else {
                 concatString += arr[2];
-                this.checkDoubleDigitAnswer(concatString);
-            }           
+                if (parseInt(concatString) === this.rightAnswer) {
+                    this.checkDoubleDigitAnswer();
+                    that.newEquation = that.equation.createEquation();
+                    that.rightAnswer = that.equation.rightAnswer(
+                      that.newEquation
+                    );
+                    that.fallSpeed += 0.1;
+                    that.userClicks = [];
+                    that.fallSpeed += 0.1;
+                    this.frequency -= 25;
+                    this.numOfEquationsSolved += 1;
+                }   
+            }         
         }
     }
 
-    checkDoubleDigitAnswer(concatString) {
-        if (parseInt(concatString) === this.rightAnswer) {
+    singleDigitAnswer(string) {
+        let arr = string.split('_');
+        const i = parseInt(arr[1]);
+        if (i === 0) {
+            delete this.bottomline[arr[0]];
+        } else {
+            this.fallingNumbers[arr[0]].splice(i - 1, 1);
+        }
+    }
 
+    checkDoubleDigitAnswer() {
+        for (let i = 0; i < this.userClicks.length; i++) {
+            this.singleDigitAnswer(this.userClicks[i]);
         }
     }
 
@@ -154,10 +155,9 @@ export default class Game {
                 clickedPos.y > top &&
                 clickedPos.y < bottom
               ) {
-                    console.log('registerClick Bottom')
-                    this.selectUnselectNumber(num);
                     concatString = `${num.pos[0]}_0_${num.text}`;
                     this.userClicks.push(concatString);
+                    this.selectUnselectNumber(num, concatString);
                     alert(num.text);
                     break;
               }
@@ -177,21 +177,27 @@ export default class Game {
                 clickedPos.y > top &&
                 clickedPos.y < bottom
               ) {
-                    console.log("registerClick falling");
-                    this.selectUnselectNumber(num);
                     concatString = `${num.pos[0]}_${i+1}_${num.text}`;
                     this.userClicks.push(concatString);
+                    this.selectUnselectNumber(num, concatString);
                     alert(num.text);
                     break;
               }
             }
         }
-        this.removeRightAnswerSquare();
+        console.log(this.userClicks);
+        this.rightAnswerCheck();
     }
 
-    selectUnselectNumber(num){
+    selectUnselectNumber(num, concatString){
         if (num.click === true) {
             num.click = false;
+            debugger
+            for (let i = 0; i < this.userClicks.length; i++) {
+                if (this.userClicks[i] === concatString) {
+                    this.userClicks.splice(i, 1)
+                }
+            }
         } else {
             num.click = true;
         }
@@ -264,7 +270,7 @@ export default class Game {
     animate() {
         if (this.playing === true) {
             this.frameH += 1;
-            if (this.frameH > 250) {
+            if (this.frameH > this.frequency) {
                 this.fallingNumber();
                 this.frameH = 0;
             }
@@ -298,7 +304,7 @@ export default class Game {
                     const foundBottomLine = this.bottomline.hasOwnProperty([
                         numbers[i][j].pos[0],
                     ]);
-                    numbers[i][j].move(foundBottomLine);
+                    numbers[i][j].move(foundBottomLine, this.fallSpeed);
                 }
             }
         }
