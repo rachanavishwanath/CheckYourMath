@@ -11,8 +11,8 @@ const HEIGHT = 600;
 export default class Game {
     constructor(canvas) {
         this.context = canvas.getContext("2d");
-        this.offsetX = canvas.offsetLeft;
-        this.offsetY = canvas.offsetTop;
+        this.offsetX = canvas.offsetLeft; //320 299
+        this.offsetY = canvas.offsetTop; //320 299
         this.bottomline = {};
         this.fallingNumbers = {};
         this.frameH = 0;
@@ -40,13 +40,12 @@ export default class Game {
         this.checkDoubleDigitAnswer = this.checkDoubleDigitAnswer.bind(this);
         this.selectUnselectNumber = this.selectUnselectNumber.bind(this);
         this.singleDigitAnswer = this.singleDigitAnswer.bind(this);
+        this.removeFromUserClicks = this.removeFromUserClicks.bind(this);
+        this.checkSqPosition = this.checkSqPosition.bind(this);
+        this.SetsAfterRightAnswerClick = this.SetsAfterRightAnswerClick.bind(this);
 
-        canvas.addEventListener("mousedown", (e) =>
-            this.registerClick(e)
-        );
-        document.addEventListener("keydown", (e) =>
-            this.keyHandler(e)
-        );
+        canvas.addEventListener("mousedown", (e) => this.registerClick(e));
+        document.addEventListener("keydown", (e) => this.keyHandler(e));
     }
 
     keyHandler(e) {
@@ -67,51 +66,47 @@ export default class Game {
         this.animate();
     }
 
-    gameOver(){
+    gameOver() {
         if (this.frameId) {
             cancelAnimationFrame(this.frameId);
         }
         this.playing = false;
         this.context.clearRect(0, 0, WIDTH, HEIGHT);
-        document.getElementById("endGame").classList.remove("hidden"); 
+        document.getElementById("endGame").classList.remove("hidden");
     }
-    
+
     rightAnswerCheck() {
         console.log(this.rightAnswer);
-        let that  = this;
         let arr;
         let concatString = "";
         for (let i = 0; i < this.userClicks.length; i++) {
             const num = this.userClicks[i];
-            arr = num.split('_');
-            if (parseInt(arr[2]) === that.rightAnswer){
-                that.singleDigitAnswer(num);
-                that.newEquation = that.equation.createEquation();
-                that.rightAnswer = that.equation.rightAnswer(that.newEquation);
-                that.fallSpeed += 0.1;
-                this.frequency -= 25;
-                this.numOfEquationsSolved += 1;
-                that.userClicks = [];
+            arr = num.split("_");
+            if (parseInt(arr[2]) === this.rightAnswer) {
+                this.singleDigitAnswer(num);
+                this.SetsAfterRightAnswerClick();
             } else {
                 concatString += arr[2];
                 if (parseInt(concatString) === this.rightAnswer) {
                     this.checkDoubleDigitAnswer();
-                    that.newEquation = that.equation.createEquation();
-                    that.rightAnswer = that.equation.rightAnswer(
-                      that.newEquation
-                    );
-                    that.fallSpeed += 0.1;
-                    that.userClicks = [];
-                    that.fallSpeed += 0.1;
-                    this.frequency -= 25;
-                    this.numOfEquationsSolved += 1;
-                }   
-            }         
+                    this.SetsAfterRightAnswerClick();
+                }
+            }
         }
     }
 
+    SetsAfterRightAnswerClick(){
+        this.newEquation = this.equation.createEquation();
+        this.rightAnswer = this.equation.rightAnswer(this.newEquation);
+        this.fallSpeed += 0.1;
+        this.userClicks = [];
+        this.fallSpeed += 0.1;
+        this.frequency -= 25;
+        this.numOfEquationsSolved += 1;
+    }
+
     singleDigitAnswer(string) {
-        let arr = string.split('_');
+        let arr = string.split("_");
         const i = parseInt(arr[1]);
         if (i === 0) {
             delete this.bottomline[arr[0]];
@@ -131,73 +126,63 @@ export default class Game {
             x: e.clientX - this.offsetX,
             y: Math.abs(e.clientY - this.offsetY) - 25,
         };
-        alert(`clicked at ${clickedPos.x} ${clickedPos.y}`);
         const currentCol = this.currentColumnForUserClick(clickedPos.x);
         let fNumbers;
-        let concatString;
         let num;
-        let left;
-        let right;
-        let top;
-        let bottom;
         let bNumbers;
+        let concatString;
         if (this.bottomline.hasOwnProperty(currentCol)) {
             bNumbers = [this.bottomline[currentCol]];
             for (let i = 0; i < bNumbers.length; i++) {
-              num = bNumbers[i];
-              left = num.pos[0];
-              right = num.pos[0] + 80;
-              bottom = num.pos[1];
-              top = num.pos[1] - 80;
-              if (
-                clickedPos.x > left &&
-                clickedPos.x < right &&
-                clickedPos.y > top &&
-                clickedPos.y < bottom
-              ) {
-                    concatString = `${num.pos[0]}_0_${num.text}`;
-                    this.userClicks.push(concatString);
-                    this.selectUnselectNumber(num, concatString);
-                    alert(num.text);
-                    break;
-              }
+                num = bNumbers[i];
+                concatString = `${num.pos[0]}_0_${num.text}`;
+                this.checkSqPosition(num, clickedPos, concatString);
             }
         }
         if (this.fallingNumbers.hasOwnProperty(currentCol)) {
             fNumbers = this.fallingNumbers[currentCol];
             for (let i = 0; i < fNumbers.length; i++) {
-              num = fNumbers[i];
-              left = num.pos[0];
-              right = num.pos[0] + 80;
-              bottom = num.pos[1];
-              top = num.pos[1] - 80;
-              if (
-                clickedPos.x > left &&
-                clickedPos.x < right &&
-                clickedPos.y > top &&
-                clickedPos.y < bottom
-              ) {
-                    concatString = `${num.pos[0]}_${i+1}_${num.text}`;
-                    this.userClicks.push(concatString);
-                    this.selectUnselectNumber(num, concatString);
-                    alert(num.text);
-                    break;
-              }
+                num = fNumbers[i];
+                concatString = `${num.pos[0]}_${i + 1}_${num.text}`;
+                this.checkSqPosition(num, clickedPos, concatString);
             }
         }
         console.log(this.userClicks);
         this.rightAnswerCheck();
     }
 
-    selectUnselectNumber(num, concatString){
+    checkSqPosition(num, clickedPos, concatString) {
+        const left = num.pos[0];
+        const right = num.pos[0] + 80;
+        const bottom = num.pos[1];
+        const top = num.pos[1] - 80;
+        if (
+            clickedPos.x > left &&
+            clickedPos.x < right &&
+            clickedPos.y > top &&
+            clickedPos.y < bottom
+        ) {
+            if (this.userClicks.includes(concatString)) {
+                    this.removeFromUserClicks(concatString);
+            } else {
+                this.userClicks.push(concatString);
+            }
+            this.selectUnselectNumber(num, concatString);
+            alert(num.text);
+        }
+    }
+
+    removeFromUserClicks(concatString) {
+        for (let i = 0; i < this.userClicks.length; i++) {
+            if (this.userClicks[i] === concatString) {
+                this.userClicks.splice(i, 1);
+            }
+        }
+    }
+
+    selectUnselectNumber(num) {
         if (num.click === true) {
             num.click = false;
-            debugger
-            for (let i = 0; i < this.userClicks.length; i++) {
-                if (this.userClicks[i] === concatString) {
-                    this.userClicks.splice(i, 1)
-                }
-            }
         } else {
             num.click = true;
         }
@@ -241,10 +226,10 @@ export default class Game {
             sq.drawSquare(this.context, color);
         });
         Object.values(this.fallingNumbers).forEach((num) => {
-            for (let i = 0; i < num.length; i++) {
-                const color2 = num.click ? "darkgrey" : "black";
-                num[i].drawSquare(this.context, color2);
-            }
+        for (let i = 0; i < num.length; i++) {
+            const color2 = num[i].click ? "darkgrey" : "black";
+            num[i].drawSquare(this.context, color2);
+        }
         });
     }
 
@@ -258,8 +243,7 @@ export default class Game {
         const pos = this.randomPositionforFallingNumbers();
         const num = Math.round(Math.random() * 10) % 10;
         const fallingNum = new Numbers(pos, num);
-        const color = fallingNum.click ? "darkgrey" : "black";
-        fallingNum.drawSquare(this.context, color);
+        fallingNum.drawSquare(this.context, "black");
         this.fallingNumbers[pos[0]] = this.fallingNumbers[pos[0]] || [];
         this.fallingNumbers[pos[0]].push(fallingNum);
         if (this.fallingNumbers[pos[0]].length === 6) {
@@ -270,19 +254,16 @@ export default class Game {
     animate() {
         if (this.playing === true) {
             this.frameH += 1;
-            if (this.frameH > this.frequency) {
-                this.fallingNumber();
-                this.frameH = 0;
-            }
-            this.context.clearRect(0, 0, WIDTH, HEIGHT);
-            this.drawEquation();
-            this.moveObjects();
-            this.drawNumbers();
-
-            const callback = () =>
-                this.animate();
-
-            this.frameId = requestAnimationFrame(callback);
+        if (this.frameH > this.frequency) {
+            this.fallingNumber();
+            this.frameH = 0;
+        }
+        this.context.clearRect(0, 0, WIDTH, HEIGHT);
+        this.drawEquation();
+        this.moveObjects();
+        this.drawNumbers();
+        const callback = () => this.animate();
+        this.frameId = requestAnimationFrame(callback);
         }
     }
 
@@ -303,11 +284,10 @@ export default class Game {
                 if (!this.detectCollision(numbers[i][j].pos, j)) {
                     const foundBottomLine = this.bottomline.hasOwnProperty([
                         numbers[i][j].pos[0],
-                    ]);
-                    numbers[i][j].move(foundBottomLine, this.fallSpeed);
+                ]);
+                numbers[i][j].move(foundBottomLine, this.fallSpeed);
                 }
             }
         }
     }
-
 }
