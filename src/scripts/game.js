@@ -168,7 +168,7 @@ export default class Game {
                 this.userClicks.push(concatString);
             }
             this.selectUnselectNumber(num, concatString);
-            alert(num.text);
+            // alert(num.text);
         }
     }
 
