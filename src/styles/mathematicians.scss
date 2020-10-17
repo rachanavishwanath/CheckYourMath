@@ -1,0 +1,62 @@
+.famous {
+    font-family: cursive;
+    text-align: center;
+    color: #fee;
+    font-size: 50px;
+    letter-spacing: 1px;
+    text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ff4444, 0 0 0.5em #ff4444, 0 0 0.1em #ff4444, 0 10px 3px #000;
+}
+
+.Indian-mathematicians {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.name {
+    font-family: cursive;
+    text-align: center;
+    color: #fee;
+}
+
+.photo {
+    transition: all .5s ease-in;
+    box-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ff4444, 0 0 0.5em #ff4444, 0 0 0.1em #ff4444, 0 10px 3px #000;
+    &:hover {
+        width: 250px;
+        height: 350px;
+        transition: all .5s ease-in;
+        div > .desc {
+            display: block;
+        }
+    }
+}
+
+.desc {
+    font-size: 20px;
+    transition: .5s ease;
+    opacity: 0;
+    color: #fee;
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-family: cursive;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.math {
+  position: relative;
+}
+
+.math:hover .photo {
+  opacity: 0.50;
+}
+
+.math:hover .desc {
+  opacity: 1;
+}
