@@ -73,6 +73,14 @@ export default class Game {
         }
         this.playing = false;
         this.context.clearRect(0, 0, WIDTH, HEIGHT);
+        this.bottomline = {};
+        this.fallingNumbers = {};
+        this.frameH = 0;
+        this.userClicks = [];
+        this.playing = false;
+        this.fallSpeed = 0.3;
+        this.frequency = 250;
+        this.numOfEquationsSolved = 0;
         document.getElementById("endGame").classList.remove("hidden");
     }
 
