@@ -11,9 +11,36 @@ This is a single player game.
 ## Functionality
  
  ![](Game.gif)
+ 
+ Pause and play feature:
+ 
  ![](Pause_Play.gif)
+ 
+ Selected incorrect number? No problem, click again to unselect it!
+ 
  ![](Select_Unselect.gif)
-
+ 
+ Random generation of equations:
+```
+ const length = Math.round((Math.random() * 10) % 1) + 1;
+        const startNum1 = Math.round((Math.random() * 10) % 4) + 1;
+        const startNum2 = Math.round((Math.random() * 10) % 4) + 1;
+        const mathOp = MATHOP[Math.round((Math.random() * 10) % 2)];
+        let num1 = this.shuffled(NUMBERS).slice(
+            startNum1,
+            startNum1 + length
+        );
+        let num2 = this.shuffled(NUMBERS).slice(
+            startNum2,
+            startNum2 + length
+        );
+        if (parseInt(num1) < parseInt(num2) && mathOp === '-') {
+            const temp = num1;
+            num1 = num2;
+            num2 = temp;
+        }
+        const equation = `What is ${num1} ${mathOp} ${num2}?`;
+```
 ## MVPs
   * Make the falling numbers and display on screen
   * Genarate equations
@@ -33,7 +60,6 @@ This is a single player game.
     * generates random math equations
   * Game
     * Holds core game functionality
-      * Start
   * GameView
     * stores a game instance, 
     * stores a canvas to draw into 
