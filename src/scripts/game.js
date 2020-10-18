@@ -26,6 +26,7 @@ export default class Game {
         this.fallSpeed = 0.3;
         this.frequency = 250;
         this.numOfEquationsSolved = 0;
+        this.gamePaused = false;
 
         this.InitialLayer = this.InitialLayer.bind(this);
         this.registerClick = this.registerClick.bind(this);
@@ -46,6 +47,15 @@ export default class Game {
 
         canvas.addEventListener("mousedown", (e) => this.registerClick(e));
         document.addEventListener("keydown", (e) => this.keyHandler(e));
+
+        document
+          .getElementsByClassName("pause-play")[0]
+          .addEventListener("click", (e) => {
+            e.preventDefault();
+            this.gamePaused = !this.gamePaused;
+            if (!this.gamePaused) {this.animate()};
+          });
+
     }
 
     keyHandler(e) {
@@ -189,11 +199,7 @@ export default class Game {
     }
 
     selectUnselectNumber(num) {
-        if (num.click === true) {
-            num.click = false;
-        } else {
-            num.click = true;
-        }
+        num.click = !num.click;
     }
 
     currentColumnForUserClick(xOfClicked) {
@@ -260,6 +266,7 @@ export default class Game {
     }
 
     animate() {
+        if (this.gamePaused) { return }
         if (this.playing === true) {
             this.frameH += 1;
         if (this.frameH > this.frequency) {
