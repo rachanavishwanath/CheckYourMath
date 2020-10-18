@@ -1,6 +1,6 @@
 # CheckYourMath
 
-[Live Link coming soon](https://pages.github.com/)
+[Live Link coming soon](https://rachanavishwanath.github.io/CheckYourMath/)
 
 ## Overview
 
@@ -9,7 +9,10 @@ This is a single player game.
   * Player can choose answer from the numbers on the screen
 
 ## Functionality
-
+ 
+ ![](Game.gif)
+ ![](Pause_Play.gif)
+ ![](Select_Unselect.gif)
 
 ## MVPs
   * Make the falling numbers and display on screen
