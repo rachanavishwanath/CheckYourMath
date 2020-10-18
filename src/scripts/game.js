@@ -42,7 +42,7 @@ export default class Game {
         this.singleDigitAnswer = this.singleDigitAnswer.bind(this);
         this.removeFromUserClicks = this.removeFromUserClicks.bind(this);
         this.checkSqPosition = this.checkSqPosition.bind(this);
-        this.SetsAfterRightAnswerClick = this.SetsAfterRightAnswerClick.bind(this);
+        this.StepsAfterRightAnswerClick = this.StepsAfterRightAnswerClick.bind(this);
 
         canvas.addEventListener("mousedown", (e) => this.registerClick(e));
         document.addEventListener("keydown", (e) => this.keyHandler(e));
@@ -57,6 +57,7 @@ export default class Game {
     }
 
     restartGame() {
+        this.context.clearRect(0, 0, WIDTH, HEIGHT);
         document.getElementById("startGame").classList.add("hidden");
         document.getElementById("endGame").classList.add("hidden");
         this.newEquation = this.equation.createEquation();
@@ -84,18 +85,18 @@ export default class Game {
             arr = num.split("_");
             if (parseInt(arr[2]) === this.rightAnswer) {
                 this.singleDigitAnswer(num);
-                this.SetsAfterRightAnswerClick();
+                this.StepsAfterRightAnswerClick();
             } else {
                 concatString += arr[2];
                 if (parseInt(concatString) === this.rightAnswer) {
                     this.checkDoubleDigitAnswer();
-                    this.SetsAfterRightAnswerClick();
+                    this.StepsAfterRightAnswerClick();
                 }
             }
         }
     }
 
-    SetsAfterRightAnswerClick(){
+    StepsAfterRightAnswerClick(){
         this.newEquation = this.equation.createEquation();
         this.rightAnswer = this.equation.rightAnswer(this.newEquation);
         this.fallSpeed += 0.1;
@@ -168,7 +169,6 @@ export default class Game {
                 this.userClicks.push(concatString);
             }
             this.selectUnselectNumber(num, concatString);
-            // alert(num.text);
         }
     }
 
