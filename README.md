@@ -1,6 +1,6 @@
 # CheckYourMath
 
-[Live Link coming soon](https://rachanavishwanath.github.io/CheckYourMath/)
+[Live Link](https://rachanavishwanath.github.io/CheckYourMath/)
 
 ## Overview
 
