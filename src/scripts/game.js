@@ -72,6 +72,13 @@ export default class Game {
         document.getElementById("endGame").classList.add("hidden");
         this.newEquation = this.equation.createEquation();
         this.rightAnswer = this.equation.rightAnswer(this.newEquation);
+        this.bottomline = {};
+        this.fallingNumbers = {};
+        this.frameH = 0;
+        this.userClicks = [];
+        this.fallSpeed = 0.3;
+        this.frequency = 250;
+        this.numOfEquationsSolved = 0;
         this.InitialLayer();
         this.fallingNumber();
         this.animate();
@@ -83,14 +90,6 @@ export default class Game {
         }
         this.playing = false;
         this.context.clearRect(0, 0, WIDTH, HEIGHT);
-        this.bottomline = {};
-        this.fallingNumbers = {};
-        this.frameH = 0;
-        this.userClicks = [];
-        this.playing = false;
-        this.fallSpeed = 0.3;
-        this.frequency = 250;
-        this.numOfEquationsSolved = 0;
         document.getElementById("endGame").classList.remove("hidden");
     }
 
