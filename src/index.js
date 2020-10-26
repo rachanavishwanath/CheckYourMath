@@ -20,7 +20,5 @@ document.addEventListener('DOMContentLoaded', () => {
   const context = canvas.getContext('2d');
   const offsetX = canvas.offsetLeft;
   const offsetY = canvas.offsetTop;
-  let clickedPos;
-  console.log('Its working');
   const game = new Game(canvas);
 })

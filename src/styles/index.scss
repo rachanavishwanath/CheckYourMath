@@ -3,7 +3,7 @@
 @import './navBar.scss';
 @import './instructions.scss';
 @import './buttons.scss';
-
+@import './modal.scss';
 
 body {
   background: url(../images/brickBkg3.jpg);
@@ -20,6 +20,14 @@ body {
     font-weight: bold;
 }
 
+.onTop {
+    position: fixed;
+    top: 450px;
+    color:#990000;
+    right: 575px;
+}
+
+
 .hidden{
   display: none;
 }
@@ -32,4 +40,12 @@ div.canvas-div {
   margin: auto;
   height: 550px;
   width: 800px;
+}
+
+.blink_me {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {  
+  50% { opacity: 0; }
 }
