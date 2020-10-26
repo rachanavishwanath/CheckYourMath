@@ -9,9 +9,13 @@ const NUMBERS = '0123456789';
 export default class Equation {
     constructor(numbers) {
         this.numbers = numbers;
+        this.newEq = '';
+
         this.createEquation = this.createEquation.bind(this);
         this.rightAnswer = this.rightAnswer.bind(this);
         this.newEquation = this.createEquation();
+        this.generateNewEquation = this.generateNewEquation.bind(this);
+        this.checkAnsonScreen = this.checkAnsonScreen.bind(this);
     }
 
     shuffled (unshuffled) {
@@ -23,7 +27,33 @@ export default class Equation {
                 .join("");
     };
 
-    createEquation() {
+    createEquation(numbersOnScreen) {
+        this.generateNewEquation();
+        if (numbersOnScreen === undefined) {
+            return this.newEq;
+        }
+        if (this.checkAnsonScreen(numbersOnScreen)) {
+            return this.newEq;
+        } else {
+            return this.createEquation(numbersOnScreen);
+        }
+    }
+
+    checkAnsonScreen(numbersOnScreen){
+        let ans = this.rightAnswer(this.newEq);
+        let ansArr = ans.toString().split('');
+        let rightAns = {};
+        for (let i = 0; i < ansArr.length; i++){
+            debugger
+            rightAns[parseInt(ansArr[i])] = rightAns[parseInt(ansArr[i])] + 1 || 1
+            if (numbersOnScreen[parseInt(ansArr[i])] < rightAns[parseInt(ansArr[i])]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    generateNewEquation(){
         const length = Math.round((Math.random() * 10) % 1) + 1;
         const startNum1 = Math.round((Math.random() * 10) % 4) + 1;
         const startNum2 = Math.round((Math.random() * 10) % 4) + 1;
@@ -42,7 +72,7 @@ export default class Equation {
             num2 = temp;
         }
         const equation = `What is ${num1} ${mathOp} ${num2}?`;
-        return equation;
+        this.newEq = equation
     }
 
     rightAnswer(equation){

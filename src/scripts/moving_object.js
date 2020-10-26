@@ -23,9 +23,9 @@ export default class MovingObject {
     }
 
     move(foundBottomLine, fallSpeed) {
-        if (foundBottomLine && this.pos[1] >= 393) {
+        if (foundBottomLine && this.pos[1] >= 390) {
             this.pos[1];
-        } else if (!foundBottomLine && this.pos[1] >= 473) {
+        } else if (!foundBottomLine && this.pos[1] >= 470) {
             this.pos[1];
         } else {
           this.pos[1] += fallSpeed;

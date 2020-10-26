@@ -27,6 +27,7 @@ export default class Game {
         this.frequency = 250;
         this.numOfEquationsSolved = 0;
         this.gamePaused = false;
+        this.numbersOnScreen = {};
 
         this.InitialLayer = this.InitialLayer.bind(this);
         this.registerClick = this.registerClick.bind(this);
@@ -70,7 +71,11 @@ export default class Game {
         this.context.clearRect(0, 0, WIDTH, HEIGHT);
         document.getElementById("startGame").classList.add("hidden");
         document.getElementById("endGame").classList.add("hidden");
-        this.newEquation = this.equation.createEquation();
+        let solvedEq = document.getElementsByClassName("solvedEqs");
+        if (solvedEq.length != 0) {
+            solvedEq[0].remove();
+        }
+        this.newEquation = this.equation.createEquation(this.numbersOnScreen);
         this.rightAnswer = this.equation.rightAnswer(this.newEquation);
         this.bottomline = {};
         this.fallingNumbers = {};
@@ -89,12 +94,16 @@ export default class Game {
             cancelAnimationFrame(this.frameId);
         }
         this.playing = false;
-        this.context.clearRect(0, 0, WIDTH, HEIGHT);
+        // this.context.clearRect(0, 0, WIDTH, HEIGHT);
         document.getElementById("endGame").classList.remove("hidden");
+        const h3 = document.createElement("h3");
+        const text = document.createTextNode(`You solved ${this.numOfEquationsSolved} equations!`);
+        h3.classList.add("solvedEqs");
+        h3.appendChild(text);
+        document.getElementById("endGame").appendChild(h3);
     }
 
     rightAnswerCheck() {
-        console.log(this.rightAnswer);
         let arr;
         let concatString = "";
         for (let i = 0; i < this.userClicks.length; i++) {
@@ -114,22 +123,25 @@ export default class Game {
     }
 
     StepsAfterRightAnswerClick(){
-        this.newEquation = this.equation.createEquation();
+        console.log(this.numbersOnScreen);
+        this.newEquation = this.equation.createEquation(this.numbersOnScreen);
         this.rightAnswer = this.equation.rightAnswer(this.newEquation);
-        this.fallSpeed += 0.1;
         this.userClicks = [];
-        this.fallSpeed += 0.1;
-        this.frequency -= 25;
+        this.fallSpeed += 0.2;
+        this.frequency = (this.frequency === 50 ? this.frequency : this.frequency -= 25);
         this.numOfEquationsSolved += 1;
     }
 
     singleDigitAnswer(string) {
         let arr = string.split("_");
+        console.log(this.numbersOnScreen);
         const i = parseInt(arr[1]);
         if (i === 0) {
             delete this.bottomline[arr[0]];
+            this.numbersOnScreen[parseInt(arr[2])] -= 1;
         } else {
             this.fallingNumbers[arr[0]].splice(i - 1, 1);
+            this.numbersOnScreen[parseInt(arr[2])] -= 1;
         }
     }
 
@@ -165,7 +177,6 @@ export default class Game {
                 this.checkSqPosition(num, clickedPos, concatString);
             }
         }
-        console.log(this.userClicks);
         this.rightAnswerCheck();
     }
 
@@ -224,7 +235,8 @@ export default class Game {
         let posAtX = 0;
         for (let i = 0; i < NumColumns; i++) {
             num = i;
-            const newNumber = new Numbers([posAtX, 474], num);
+            this.numbersOnScreen[num] = 1;
+            const newNumber = new Numbers([posAtX, 470], num);
             const color = newNumber.click ? "darkgrey" : "black";
             newNumber.drawSquare(this.context, color);
             this.bottomline[posAtX] = newNumber;
@@ -254,12 +266,13 @@ export default class Game {
 
     fallingNumber() {
         const pos = this.randomPositionforFallingNumbers();
-        const num = Math.round(Math.random() * 10) % 10;
+        const num = Math.floor(Math.random() * 10);
+        this.numbersOnScreen[num] += 1;
         const fallingNum = new Numbers(pos, num);
         fallingNum.drawSquare(this.context, "black");
         this.fallingNumbers[pos[0]] = this.fallingNumbers[pos[0]] || [];
         this.fallingNumbers[pos[0]].push(fallingNum);
-        if (this.fallingNumbers[pos[0]].length === 6) {
+        if (this.fallingNumbers[pos[0]].length >= 7) {
             this.gameOver();
         }
     }

@@ -1,0 +1,24 @@
+.modal-background {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 10;
+}
+
+.modal-child{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #FFC1D2;
+  height: 600px;
+  min-width: 500px;
+  max-width: 600px;
+  z-index: 15;
+  overflow: auto;
+  border: 12px solid rgb(253,231,178);
+  border-radius: 25px;
+}
