@@ -6,17 +6,13 @@ import GameView from './scripts/game_view';
 
 const Util = require('./scripts/util');
 
-function registerClick(e, clickedPos, offsetX, offsetY) {
-  clickedPos = {
-    x: e.clientX - offsetX,
-    y: e.clientY - offsetY,
-  };
-  alert(`clicked at ${clickedPos.x} ${clickedPos.y}`);
-  return clickedPos;
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById("canvas");
+  canvas.setAttribute("width", "800px");
+  canvas.setAttribute("height", "600px");
+  debugger
+  console.log(`window:width ${window.innerWidth}`);
+  console.log(`window:height ${window.innerHeight}`);
   const context = canvas.getContext('2d');
   const offsetX = canvas.offsetLeft;
   const offsetY = canvas.offsetTop;

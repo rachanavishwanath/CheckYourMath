@@ -44,7 +44,6 @@ export default class Equation {
         let ansArr = ans.toString().split('');
         let rightAns = {};
         for (let i = 0; i < ansArr.length; i++){
-            debugger
             rightAns[parseInt(ansArr[i])] = rightAns[parseInt(ansArr[i])] + 1 || 1
             if (numbersOnScreen[parseInt(ansArr[i])] < rightAns[parseInt(ansArr[i])]) {
                 return false;
