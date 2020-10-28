@@ -10,11 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById("canvas");
   canvas.setAttribute("width", "800px");
   canvas.setAttribute("height", "600px");
-  debugger
-  console.log(`window:width ${window.innerWidth}`);
-  console.log(`window:height ${window.innerHeight}`);
-  const context = canvas.getContext('2d');
-  const offsetX = canvas.offsetLeft;
-  const offsetY = canvas.offsetTop;
-  const game = new Game(canvas);
+  // const game = new Game(canvas);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === "Enter") {
+        const game = new Game(canvas);
+        game.restartGame();
+    }
+  })
+  
 })

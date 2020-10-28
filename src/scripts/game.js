@@ -17,7 +17,7 @@ export default class Game {
         this.fallingNumbers = {};
         this.frameH = 0;
         this.userClicks = [];
-        this.playing = false;
+        this.playing = true;
         this.frameId = null;
         this.equation = new Equation();
         this.newEquation = null;
@@ -37,7 +37,6 @@ export default class Game {
         this.animate = this.animate.bind(this);
         this.detectCollision = this.detectCollision.bind(this);
         this.rightAnswerCheck = this.rightAnswerCheck.bind(this);
-        this.keyHandler = this.keyHandler.bind(this);
         this.gameOver = this.gameOver.bind(this);
         this.checkDoubleDigitAnswer = this.checkDoubleDigitAnswer.bind(this);
         this.selectUnselectNumber = this.selectUnselectNumber.bind(this);
@@ -47,24 +46,18 @@ export default class Game {
         this.StepsAfterRightAnswerClick = this.StepsAfterRightAnswerClick.bind(this);
 
         canvas.addEventListener("mousedown", (e) => this.registerClick(e));
-        document.addEventListener("keydown", (e) => this.keyHandler(e));
 
         document
           .getElementsByClassName("pause-play")[0]
           .addEventListener("click", (e) => {
             e.preventDefault();
+            console.log(this.gamePaused);
             this.gamePaused = !this.gamePaused;
+            console.log(this.gamePaused);
             if (!this.gamePaused) {this.animate()};
+
           });
 
-    }
-
-    keyHandler(e) {
-        e.preventDefault();
-        if (e.key == "Enter") {
-            this.playing = true;
-            this.restartGame();
-        }
     }
 
     restartGame() {
@@ -94,7 +87,6 @@ export default class Game {
             cancelAnimationFrame(this.frameId);
         }
         this.playing = false;
-        // this.context.clearRect(0, 0, WIDTH, HEIGHT);
         document.getElementById("endGame").classList.remove("hidden");
         const h3 = document.createElement("h3");
         const text = document.createTextNode(`You solved ${this.numOfEquationsSolved} equations!`);
@@ -123,7 +115,6 @@ export default class Game {
     }
 
     StepsAfterRightAnswerClick(){
-        console.log(this.numbersOnScreen);
         this.newEquation = this.equation.createEquation(this.numbersOnScreen);
         this.rightAnswer = this.equation.rightAnswer(this.newEquation);
         this.userClicks = [];
@@ -134,7 +125,6 @@ export default class Game {
 
     singleDigitAnswer(string) {
         let arr = string.split("_");
-        console.log(this.numbersOnScreen);
         const i = parseInt(arr[1]);
         if (i === 0) {
             delete this.bottomline[arr[0]];
@@ -153,7 +143,7 @@ export default class Game {
 
     registerClick(e) {
         const clickedPos = {
-            x: e.clientX - this.offsetX,
+            x: e.clientX - ((window.innerWidth - WIDTH) / 2),
             y: Math.abs(e.clientY - this.offsetY) - 25,
         };
         const currentCol = this.currentColumnForUserClick(clickedPos.x);
@@ -279,7 +269,7 @@ export default class Game {
 
     animate() {
         if (this.gamePaused) { return }
-        if (this.playing === true) {
+    if (this.playing === true) {
             this.frameH += 1;
         if (this.frameH > this.frequency) {
             this.fallingNumber();
