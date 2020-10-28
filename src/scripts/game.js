@@ -57,25 +57,23 @@ export default class Game {
             this.gamePaused = !this.gamePaused;
             console.log(this.gamePaused);
             if (!this.gamePaused) {this.animate()};
-
           });
 
     }
 
     keyHandler(e){
-        e.preventDefault();
         if (e.key === "Enter") {
-            debugger
+                e.preventDefault();
+                cancelAnimationFrame(this.frameId)
             // if (this.playing === true && this.endGame === false) {
-            //     debugger
             //     const h3 = document.createElement("h3");
             //     const text = document.createTextNode(`Are you sure you want to restart the game?`);
             //     h3.classList.add("areYouSure");
             //     h3.appendChild(text);
             //     document.getElementById("startGame").appendChild(h3);
             // }
-            this.playing = true;
-            this.restartGame();
+                this.playing = true;
+                this.restartGame();
         }
     } 
 
@@ -104,7 +102,6 @@ export default class Game {
     }
 
     gameOver() {
-        debugger
         if (this.frameId) {
             cancelAnimationFrame(this.frameId);
         }
@@ -165,9 +162,10 @@ export default class Game {
     }
 
     registerClick(e) {
+        const currentOffsetY = Math.abs(visualViewport.pageTop - this.offsetY);
         const clickedPos = {
             x: e.clientX - ((window.innerWidth - WIDTH) / 2),
-            y: Math.abs(e.clientY - this.offsetY),
+            y: Math.abs(e.clientY - currentOffsetY),
         };
         const currentCol = this.currentColumnForUserClick(clickedPos.x);
         let fNumbers;

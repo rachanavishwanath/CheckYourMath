@@ -18,6 +18,9 @@
     font-family: cursive;
     text-align: center;
     color: #fee;
+    font-size: 20px;
+    font-weight: bold;
+    padding-bottom: 100px;
 }
 
 .photo {
@@ -27,6 +30,7 @@
         width: 250px;
         height: 350px;
         transition: all .5s ease-in;
+        cursor: pointer;
         div > .desc {
             display: block;
         }
