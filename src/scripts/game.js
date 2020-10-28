@@ -28,7 +28,6 @@ export default class Game {
         this.numOfEquationsSolved = 0;
         this.gamePaused = false;
         this.numbersOnScreen = {};
-        this.endGame = false;
 
         this.InitialLayer = this.InitialLayer.bind(this);
         this.registerClick = this.registerClick.bind(this);
@@ -99,7 +98,7 @@ export default class Game {
         this.playing = true;
         this.InitialLayer();
         this.fallingNumber();
-        this.endGame = false;
+        this.gamePaused = false;
         this.newEquation = this.equation.createEquation(this.numbersOnScreen);
         this.rightAnswer = this.equation.rightAnswer(this.newEquation);
         this.animate();
@@ -110,7 +109,6 @@ export default class Game {
             cancelAnimationFrame(this.frameId);
         }
         this.playing = false;
-        this.endGame = true;
         document.getElementById("endGame").classList.remove("hidden");
         const h3 = document.createElement("h3");
         const text = document.createTextNode(`You solved ${this.numOfEquationsSolved} equations!`);

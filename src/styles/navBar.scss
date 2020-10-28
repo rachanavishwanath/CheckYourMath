@@ -28,6 +28,14 @@
   animation: blink linear infinite 3s;
 }
 
+.byline {
+  color: #fee;
+  font-family: cursive;
+  font-size: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
 @keyframes blink {
   78% {
     color: inherit;
