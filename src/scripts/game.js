@@ -17,7 +17,7 @@ export default class Game {
         this.fallingNumbers = {};
         this.frameH = 0;
         this.userClicks = [];
-        this.playing = true;
+        this.playing = null;
         this.frameId = null;
         this.equation = new Equation();
         this.newEquation = null;
@@ -53,29 +53,30 @@ export default class Game {
           .getElementsByClassName("pause-play")[0]
           .addEventListener("click", (e) => {
             e.preventDefault();
-            console.log(this.gamePaused);
             this.gamePaused = !this.gamePaused;
-            console.log(this.gamePaused);
             if (!this.gamePaused) {this.animate()};
-
           });
+
+          document
+            .getElementsByClassName("restart")[0]
+            .addEventListener("mousedown", e => {
+                e.preventDefault();
+                cancelAnimationFrame(this.frameId);
+                this.restartGame();
+            })
 
     }
 
     keyHandler(e){
-        e.preventDefault();
         if (e.key === "Enter") {
-            debugger
-            // if (this.playing === true && this.endGame === false) {
-            //     debugger
-            //     const h3 = document.createElement("h3");
-            //     const text = document.createTextNode(`Are you sure you want to restart the game?`);
-            //     h3.classList.add("areYouSure");
-            //     h3.appendChild(text);
-            //     document.getElementById("startGame").appendChild(h3);
-            // }
-            this.playing = true;
-            this.restartGame();
+                e.preventDefault();
+                cancelAnimationFrame(this.frameId)
+                if (this.playing) { 
+                    this.animate();
+                    return; 
+                }
+                this.playing = true;
+                this.restartGame();
         }
     } 
 
@@ -95,6 +96,7 @@ export default class Game {
         this.fallSpeed = 0.3;
         this.frequency = 250;
         this.numOfEquationsSolved = 0;
+        this.playing = true;
         this.InitialLayer();
         this.fallingNumber();
         this.endGame = false;
@@ -104,7 +106,6 @@ export default class Game {
     }
 
     gameOver() {
-        debugger
         if (this.frameId) {
             cancelAnimationFrame(this.frameId);
         }
@@ -165,9 +166,10 @@ export default class Game {
     }
 
     registerClick(e) {
+        const currentOffsetY = Math.abs(visualViewport.pageTop - this.offsetY);
         const clickedPos = {
             x: e.clientX - ((window.innerWidth - WIDTH) / 2),
-            y: Math.abs(e.clientY - this.offsetY),
+            y: Math.abs(e.clientY - currentOffsetY),
         };
         const currentCol = this.currentColumnForUserClick(clickedPos.x);
         let fNumbers;
