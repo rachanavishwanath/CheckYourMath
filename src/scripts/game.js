@@ -28,6 +28,7 @@ export default class Game {
         this.numOfEquationsSolved = 0;
         this.gamePaused = false;
         this.numbersOnScreen = {};
+        this.endGame = false;
 
         this.InitialLayer = this.InitialLayer.bind(this);
         this.registerClick = this.registerClick.bind(this);
@@ -44,9 +45,10 @@ export default class Game {
         this.removeFromUserClicks = this.removeFromUserClicks.bind(this);
         this.checkSqPosition = this.checkSqPosition.bind(this);
         this.StepsAfterRightAnswerClick = this.StepsAfterRightAnswerClick.bind(this);
+        this.keyHandler = this.keyHandler.bind(this);
 
         canvas.addEventListener("mousedown", (e) => this.registerClick(e));
-
+        document.addEventListener("keydown", e => this.keyHandler(e))
         document
           .getElementsByClassName("pause-play")[0]
           .addEventListener("click", (e) => {
@@ -60,6 +62,23 @@ export default class Game {
 
     }
 
+    keyHandler(e){
+        e.preventDefault();
+        if (e.key === "Enter") {
+            debugger
+            // if (this.playing === true && this.endGame === false) {
+            //     debugger
+            //     const h3 = document.createElement("h3");
+            //     const text = document.createTextNode(`Are you sure you want to restart the game?`);
+            //     h3.classList.add("areYouSure");
+            //     h3.appendChild(text);
+            //     document.getElementById("startGame").appendChild(h3);
+            // }
+            this.playing = true;
+            this.restartGame();
+        }
+    } 
+
     restartGame() {
         this.context.clearRect(0, 0, WIDTH, HEIGHT);
         document.getElementById("startGame").classList.add("hidden");
@@ -68,8 +87,7 @@ export default class Game {
         if (solvedEq.length != 0) {
             solvedEq[0].remove();
         }
-        this.newEquation = this.equation.createEquation(this.numbersOnScreen);
-        this.rightAnswer = this.equation.rightAnswer(this.newEquation);
+        this.numbersOnScreen = {}
         this.bottomline = {};
         this.fallingNumbers = {};
         this.frameH = 0;
@@ -79,14 +97,19 @@ export default class Game {
         this.numOfEquationsSolved = 0;
         this.InitialLayer();
         this.fallingNumber();
+        this.endGame = false;
+        this.newEquation = this.equation.createEquation(this.numbersOnScreen);
+        this.rightAnswer = this.equation.rightAnswer(this.newEquation);
         this.animate();
     }
 
     gameOver() {
+        debugger
         if (this.frameId) {
             cancelAnimationFrame(this.frameId);
         }
         this.playing = false;
+        this.endGame = true;
         document.getElementById("endGame").classList.remove("hidden");
         const h3 = document.createElement("h3");
         const text = document.createTextNode(`You solved ${this.numOfEquationsSolved} equations!`);
@@ -144,7 +167,7 @@ export default class Game {
     registerClick(e) {
         const clickedPos = {
             x: e.clientX - ((window.innerWidth - WIDTH) / 2),
-            y: Math.abs(e.clientY - this.offsetY) - 25,
+            y: Math.abs(e.clientY - this.offsetY),
         };
         const currentCol = this.currentColumnForUserClick(clickedPos.x);
         let fNumbers;
@@ -156,7 +179,9 @@ export default class Game {
             for (let i = 0; i < bNumbers.length; i++) {
                 num = bNumbers[i];
                 concatString = `${num.pos[0]}_0_${num.text}`;
-                this.checkSqPosition(num, clickedPos, concatString);
+                if (this.checkSqPosition(num, clickedPos, concatString)){
+                    break;
+                };
             }
         }
         if (this.fallingNumbers.hasOwnProperty(currentCol)) {
@@ -164,7 +189,9 @@ export default class Game {
             for (let i = 0; i < fNumbers.length; i++) {
                 num = fNumbers[i];
                 concatString = `${num.pos[0]}_${i + 1}_${num.text}`;
-                this.checkSqPosition(num, clickedPos, concatString);
+                if (this.checkSqPosition(num, clickedPos, concatString)){
+                    break;
+                };
             }
         }
         this.rightAnswerCheck();
@@ -172,9 +199,9 @@ export default class Game {
 
     checkSqPosition(num, clickedPos, concatString) {
         const left = num.pos[0];
-        const right = num.pos[0] + 80;
-        const bottom = num.pos[1];
-        const top = num.pos[1] - 80;
+        const right = num.pos[0] + 81;
+        const top = num.pos[1];
+        const bottom = num.pos[1] + 80;
         if (
             clickedPos.x > left &&
             clickedPos.x < right &&
@@ -187,7 +214,9 @@ export default class Game {
                 this.userClicks.push(concatString);
             }
             this.selectUnselectNumber(num, concatString);
+            return true
         }
+        return false;
     }
 
     removeFromUserClicks(concatString) {
@@ -262,7 +291,9 @@ export default class Game {
         fallingNum.drawSquare(this.context, "black");
         this.fallingNumbers[pos[0]] = this.fallingNumbers[pos[0]] || [];
         this.fallingNumbers[pos[0]].push(fallingNum);
-        if (this.fallingNumbers[pos[0]].length >= 7) {
+        if (this.InitialLayer.hasOwnProperty(pos[0]) && this.fallingNumbers[pos[0]].length >= 6) {
+            this.gameOver();
+        } else if (this.fallingNumbers[pos[0]].length >= 7) {
             this.gameOver();
         }
     }

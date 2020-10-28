@@ -11,11 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
   canvas.setAttribute("width", "800px");
   canvas.setAttribute("height", "600px");
   // const game = new Game(canvas);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === "Enter") {
-        const game = new Game(canvas);
-        game.restartGame();
-    }
-  })
-  
+  // document.addEventListener('keydown', (e) => {
+  //   if (e.key === "Enter") {
+  //       const game = new Game(canvas);
+  //       game.restartGame();
+  //   }
+  // })
+  const game = new Game(canvas);
 })
